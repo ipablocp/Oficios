@@ -20,7 +20,7 @@
 		6E9CBED018F88D1200BDF62A /* sil_3.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E9CBEC318F88D1200BDF62A /* sil_3.png */; };
 		6E9CBED118F88D1200BDF62A /* sil_4.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E9CBEC418F88D1200BDF62A /* sil_4.png */; };
 		6E9CBED218F88D1200BDF62A /* sil_5.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E9CBEC518F88D1200BDF62A /* sil_5.png */; };
-		6E9CBED518F89F7D00BDF62A /* CardImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9CBED418F89F7D00BDF62A /* CardImageView.m */; };
+		6E9CBED518F89F7D00BDF62A /* CardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9CBED418F89F7D00BDF62A /* CardView.m */; };
 		6EE8DC2F18F87B5C00F7E6E8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EE8DC2E18F87B5C00F7E6E8 /* Foundation.framework */; };
 		6EE8DC3118F87B5C00F7E6E8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EE8DC3018F87B5C00F7E6E8 /* CoreGraphics.framework */; };
 		6EE8DC3318F87B5C00F7E6E8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EE8DC3218F87B5C00F7E6E8 /* UIKit.framework */; };
@@ -61,8 +61,8 @@
 		6E9CBEC318F88D1200BDF62A /* sil_3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sil_3.png; sourceTree = "<group>"; };
 		6E9CBEC418F88D1200BDF62A /* sil_4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sil_4.png; sourceTree = "<group>"; };
 		6E9CBEC518F88D1200BDF62A /* sil_5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sil_5.png; sourceTree = "<group>"; };
-		6E9CBED318F89F7D00BDF62A /* CardImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CardImageView.h; sourceTree = "<group>"; };
-		6E9CBED418F89F7D00BDF62A /* CardImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CardImageView.m; sourceTree = "<group>"; };
+		6E9CBED318F89F7D00BDF62A /* CardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CardView.h; sourceTree = "<group>"; };
+		6E9CBED418F89F7D00BDF62A /* CardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CardView.m; sourceTree = "<group>"; };
 		6EE8DC2B18F87B5C00F7E6E8 /* Oficios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Oficios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EE8DC2E18F87B5C00F7E6E8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6EE8DC3018F87B5C00F7E6E8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -174,8 +174,8 @@
 				6EE8DC4018F87B5C00F7E6E8 /* Main.storyboard */,
 				6EE8DC4318F87B5C00F7E6E8 /* ActivityViewController.h */,
 				6EE8DC4418F87B5C00F7E6E8 /* ActivityViewController.m */,
-				6E9CBED318F89F7D00BDF62A /* CardImageView.h */,
-				6E9CBED418F89F7D00BDF62A /* CardImageView.m */,
+				6E9CBED318F89F7D00BDF62A /* CardView.h */,
+				6E9CBED418F89F7D00BDF62A /* CardView.m */,
 				6EE8DC4618F87B5C00F7E6E8 /* Images.xcassets */,
 				6EE8DC3518F87B5C00F7E6E8 /* Supporting Files */,
 			);
@@ -324,7 +324,7 @@
 			files = (
 				6EE8DC4518F87B5C00F7E6E8 /* ActivityViewController.m in Sources */,
 				6EE8DC3F18F87B5C00F7E6E8 /* AppDelegate.m in Sources */,
-				6E9CBED518F89F7D00BDF62A /* CardImageView.m in Sources */,
+				6E9CBED518F89F7D00BDF62A /* CardView.m in Sources */,
 				6EE8DC3B18F87B5C00F7E6E8 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

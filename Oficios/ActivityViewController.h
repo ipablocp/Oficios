@@ -8,19 +8,25 @@
 
 
 #import <UIKit/UIKit.h>
-#import "CardImageView.h"
+#import "CardView.h"
 
 
-@interface ActivityViewController : UIViewController
+@interface ActivityViewController : UIViewController <CardViewDelegate, NSXMLParserDelegate>
 
 // Data
 @property (nonatomic, readonly) NSInteger numberOfCards;
 @property (nonatomic, readonly) NSInteger numberOfSilhouettes;
+@property (nonatomic, readonly) CGFloat maxAcceptableDistance;
+@property (nonatomic, readonly) CGFloat maxAcceptableRotation;
+@property (nonatomic, readonly) CGFloat maxAcceptableScale;
+@property (nonatomic, strong) NSMutableArray *silhouetteSequence;
 
 // UI
 @property (weak, nonatomic) IBOutlet UIImageView *activityImageView;
-@property (weak, nonatomic) IBOutlet UIImageView *categoryImageView;
-@property (strong, nonatomic) IBOutletCollection(CardImageView) NSArray *cardImageViewsArray;
-@property (strong, nonatomic) IBOutletCollection(UIImageView) NSArray *silhouettes;
+@property (strong, nonatomic) IBOutletCollection(CardView) NSArray *cardViewsArray;
+@property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *silhouettes;
+
+
+- (IBAction) silouetteTouched:(UIButton*)silhouette;
 
 @end

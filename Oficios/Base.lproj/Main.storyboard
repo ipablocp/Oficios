@@ -12,82 +12,117 @@
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="dYu-xq-uDx" customClass="CardImageView">
+                            <imageView autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="Aeh-w7-8pI">
+                                <rect key="frame" x="20" y="79" width="240" height="610"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="97r-IF-YzY">
+                                <rect key="frame" x="314" y="536" width="200" height="200"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="silouetteTouched:" destination="BYZ-38-t0r" eventType="touchUpInside" id="bMh-Sv-M4X"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="p6e-BE-DMS">
+                                <rect key="frame" x="554" y="536" width="200" height="200"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="silouetteTouched:" destination="BYZ-38-t0r" eventType="touchUpInside" id="MHe-1G-gKc"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="irC-Af-98I">
+                                <rect key="frame" x="794" y="536" width="200" height="200"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="silouetteTouched:" destination="BYZ-38-t0r" eventType="touchUpInside" id="MbA-9r-vTk"/>
+                                </connections>
+                            </button>
+                            <imageView autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="dYu-xq-uDx" customClass="CardView">
                                 <rect key="frame" x="314" y="80" width="200" height="200"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <gestureRecognizers/>
                                 <connections>
+                                    <outlet property="panGestureRecognizer" destination="XbO-kw-J8l" id="xQv-IU-HZd"/>
+                                    <outlet property="pinchGestureRecognizer" destination="rz1-F8-Czb" id="4FG-Rn-gNT"/>
+                                    <outlet property="rotationGestureRecognizer" destination="C2b-ec-AKN" id="waT-MT-JS4"/>
                                     <outletCollection property="gestureRecognizers" destination="XbO-kw-J8l" appends="YES" id="5ga-gv-9bW"/>
                                     <outletCollection property="gestureRecognizers" destination="C2b-ec-AKN" appends="YES" id="LrC-p5-5FF"/>
                                     <outletCollection property="gestureRecognizers" destination="rz1-F8-Czb" appends="YES" id="cXg-JK-9Sn"/>
                                 </connections>
                             </imageView>
-                            <imageView autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="Aeh-w7-8pI">
-                                <rect key="frame" x="20" y="79" width="240" height="610"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </imageView>
-                            <imageView autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="9gz-ZI-usd" customClass="CardImageView">
+                            <imageView autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="9gz-ZI-usd" customClass="CardView">
                                 <rect key="frame" x="554" y="80" width="200" height="200"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <gestureRecognizers/>
                                 <connections>
+                                    <outlet property="panGestureRecognizer" destination="lEn-7F-e9E" id="K8X-5E-2kD"/>
+                                    <outlet property="pinchGestureRecognizer" destination="wIg-4k-hLg" id="i7t-p6-xOe"/>
+                                    <outlet property="rotationGestureRecognizer" destination="PYk-5v-d0X" id="eeL-7q-Cay"/>
                                     <outletCollection property="gestureRecognizers" destination="lEn-7F-e9E" appends="YES" id="qOP-4U-CPa"/>
                                     <outletCollection property="gestureRecognizers" destination="PYk-5v-d0X" appends="YES" id="Tsa-dn-ghH"/>
                                     <outletCollection property="gestureRecognizers" destination="wIg-4k-hLg" appends="YES" id="Kg8-r5-mFs"/>
                                 </connections>
                             </imageView>
-                            <imageView autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="rwZ-eM-eca" customClass="CardImageView">
+                            <imageView autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="rwZ-eM-eca" customClass="CardView">
                                 <rect key="frame" x="794" y="80" width="200" height="200"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <gestureRecognizers/>
                                 <connections>
+                                    <outlet property="panGestureRecognizer" destination="aYm-xv-w4e" id="Rvv-93-SCw"/>
+                                    <outlet property="pinchGestureRecognizer" destination="e2U-hs-QoV" id="kV6-a0-tfl"/>
+                                    <outlet property="rotationGestureRecognizer" destination="TRj-le-Btg" id="ONC-x2-bQH"/>
                                     <outletCollection property="gestureRecognizers" destination="aYm-xv-w4e" appends="YES" id="Xw2-D4-4jl"/>
                                     <outletCollection property="gestureRecognizers" destination="TRj-le-Btg" appends="YES" id="qMX-YV-UAf"/>
                                     <outletCollection property="gestureRecognizers" destination="e2U-hs-QoV" appends="YES" id="e9t-5k-H5F"/>
                                 </connections>
                             </imageView>
-                            <imageView autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="wbM-iR-90h" customClass="CardImageView">
+                            <imageView autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="wbM-iR-90h" customClass="CardView">
                                 <rect key="frame" x="314" y="303" width="200" height="200"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <gestureRecognizers/>
                                 <connections>
+                                    <outlet property="panGestureRecognizer" destination="WzL-wu-XjN" id="aEw-ie-bdb"/>
+                                    <outlet property="pinchGestureRecognizer" destination="Cf3-5R-iED" id="PbI-06-1Qh"/>
+                                    <outlet property="rotationGestureRecognizer" destination="7hA-pn-dYR" id="F7s-Xq-1Gb"/>
                                     <outletCollection property="gestureRecognizers" destination="0Gg-Sy-Nkb" appends="YES" id="UHo-Gp-hcE"/>
                                     <outletCollection property="gestureRecognizers" destination="eaA-yS-EHW" appends="YES" id="iSW-5f-vjs"/>
                                     <outletCollection property="gestureRecognizers" destination="0GU-mw-w7T" appends="YES" id="tIe-Du-e8f"/>
                                 </connections>
                             </imageView>
-                            <imageView autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="AEf-24-Bi2" customClass="CardImageView">
+                            <imageView autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="AEf-24-Bi2" customClass="CardView">
                                 <rect key="frame" x="554" y="303" width="200" height="200"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <gestureRecognizers/>
                                 <connections>
+                                    <outlet property="panGestureRecognizer" destination="AHu-1z-Yjp" id="EPO-vN-eOu"/>
+                                    <outlet property="pinchGestureRecognizer" destination="vX1-UA-ijM" id="16O-1b-FcC"/>
+                                    <outlet property="rotationGestureRecognizer" destination="7VW-AA-2md" id="KZO-2v-qTe"/>
                                     <outletCollection property="gestureRecognizers" destination="AHu-1z-Yjp" appends="YES" id="tsR-LL-H61"/>
                                     <outletCollection property="gestureRecognizers" destination="7VW-AA-2md" appends="YES" id="soW-l7-dHT"/>
                                     <outletCollection property="gestureRecognizers" destination="vX1-UA-ijM" appends="YES" id="KcL-p2-9cc"/>
                                 </connections>
                             </imageView>
-                            <imageView autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="8on-EE-hoX" customClass="CardImageView">
+                            <imageView autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="8on-EE-hoX" customClass="CardView">
                                 <rect key="frame" x="794" y="303" width="200" height="200"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <gestureRecognizers/>
                                 <connections>
+                                    <outlet property="panGestureRecognizer" destination="0Gg-Sy-Nkb" id="Wx8-h8-9JG"/>
+                                    <outlet property="pinchGestureRecognizer" destination="0GU-mw-w7T" id="TOM-70-SMy"/>
+                                    <outlet property="rotationGestureRecognizer" destination="eaA-yS-EHW" id="OC4-R2-WJ9"/>
                                     <outletCollection property="gestureRecognizers" destination="WzL-wu-XjN" appends="YES" id="YmX-YO-3HW"/>
                                     <outletCollection property="gestureRecognizers" destination="7hA-pn-dYR" appends="YES" id="Wfn-ry-wde"/>
                                     <outletCollection property="gestureRecognizers" destination="Cf3-5R-iED" appends="YES" id="HhG-yt-KMN"/>
                                 </connections>
-                            </imageView>
-                            <imageView autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="dfC-P2-FGJ">
-                                <rect key="frame" x="314" y="536" width="200" height="200"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <gestureRecognizers/>
-                            </imageView>
-                            <imageView autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="4hz-fV-geW">
-                                <rect key="frame" x="554" y="536" width="200" height="200"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            </imageView>
-                            <imageView autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="VHh-s2-NpT">
-                                <rect key="frame" x="794" y="536" width="200" height="200"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="0.96030618686868685" green="0.96030618686868685" blue="0.96030618686868685" alpha="1" colorSpace="calibratedRGB"/>
@@ -97,16 +132,15 @@
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <connections>
                         <outlet property="activityImageView" destination="Aeh-w7-8pI" id="cMk-55-U43"/>
-                        <outlet property="categoryImageView" destination="Aeh-w7-8pI" id="GPq-Nn-KvZ"/>
-                        <outletCollection property="cardImageViewsArray" destination="rwZ-eM-eca" id="0wH-Ga-VWl"/>
-                        <outletCollection property="cardImageViewsArray" destination="9gz-ZI-usd" id="za8-PB-yJK"/>
-                        <outletCollection property="cardImageViewsArray" destination="AEf-24-Bi2" id="QpV-SK-OKq"/>
-                        <outletCollection property="cardImageViewsArray" destination="dYu-xq-uDx" id="nFw-Cv-mMN"/>
-                        <outletCollection property="cardImageViewsArray" destination="wbM-iR-90h" id="u76-hT-ZbF"/>
-                        <outletCollection property="cardImageViewsArray" destination="8on-EE-hoX" id="wNY-L9-6LB"/>
-                        <outletCollection property="silhouettes" destination="dfC-P2-FGJ" id="6gy-BC-hEf"/>
-                        <outletCollection property="silhouettes" destination="4hz-fV-geW" id="KL4-Mv-R1a"/>
-                        <outletCollection property="silhouettes" destination="VHh-s2-NpT" id="otJ-bb-UCl"/>
+                        <outletCollection property="cardViewsArray" destination="wbM-iR-90h" id="mAY-UR-SnB"/>
+                        <outletCollection property="cardViewsArray" destination="rwZ-eM-eca" id="ceN-oS-OnK"/>
+                        <outletCollection property="cardViewsArray" destination="9gz-ZI-usd" id="wyF-Gm-sHi"/>
+                        <outletCollection property="cardViewsArray" destination="dYu-xq-uDx" id="bKS-pr-7dx"/>
+                        <outletCollection property="cardViewsArray" destination="8on-EE-hoX" id="fQH-wM-FeM"/>
+                        <outletCollection property="cardViewsArray" destination="AEf-24-Bi2" id="56V-0G-x6k"/>
+                        <outletCollection property="silhouettes" destination="97r-IF-YzY" id="V5s-dq-8Dm"/>
+                        <outletCollection property="silhouettes" destination="p6e-BE-DMS" id="Rng-f1-Gzm"/>
+                        <outletCollection property="silhouettes" destination="irC-Af-98I" id="gPM-pK-2lX"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
