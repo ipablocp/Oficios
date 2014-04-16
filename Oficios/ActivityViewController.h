@@ -27,6 +27,6 @@
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *silhouettes;
 
 
-- (IBAction) silouetteTouched:(UIButton*)silhouette;
+- (IBAction) objectTouched:(UIControl*)sender;
 
 @end

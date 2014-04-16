@@ -23,7 +23,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="silouetteTouched:" destination="BYZ-38-t0r" eventType="touchUpInside" id="bMh-Sv-M4X"/>
+                                    <action selector="objectTouched:" destination="BYZ-38-t0r" eventType="touchUpInside" id="hWN-aH-Spf"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="p6e-BE-DMS">
@@ -33,7 +33,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="silouetteTouched:" destination="BYZ-38-t0r" eventType="touchUpInside" id="MHe-1G-gKc"/>
+                                    <action selector="objectTouched:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3D8-8R-t3R"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="irC-Af-98I">
@@ -43,7 +43,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="silouetteTouched:" destination="BYZ-38-t0r" eventType="touchUpInside" id="MbA-9r-vTk"/>
+                                    <action selector="objectTouched:" destination="BYZ-38-t0r" eventType="touchUpInside" id="f7U-vN-tGB"/>
                                 </connections>
                             </button>
                             <imageView autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="dYu-xq-uDx" customClass="CardView">

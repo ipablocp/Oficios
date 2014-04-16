@@ -10,7 +10,7 @@
 #import "ActivityViewController.h"
 
 @interface ActivityViewController ()
-@property (nonatomic, weak) CardView *selectedCardView;
+@property (nonatomic, weak) UIControl *selectedObject;
 @end
 
 
@@ -32,7 +32,7 @@
     // Set self as card's delegate
     for (CardView *card in self.cardViewsArray) {
         card.delegate = self;
-        [card addTarget:self action:@selector(cardTouched:) forControlEvents:UIControlEventTouchUpInside];
+        [card addTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
     }
 }
 
@@ -75,6 +75,8 @@
         //card.center = ;
         card.originalCenter = card.center;
         card.imageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"obj_%i", i]];
+        
+        card.transform = CGAffineTransformMakeRotation(arc4random()%360);
     }
     
     // Load sequence
@@ -138,48 +140,45 @@
 }
 
 
-- (void) cardTouched:(CardView*)card
+- (IBAction) objectTouched:(UIControl*)sender
 {
-    self.selectedCardView = card;
-}
-
-
-- (IBAction) silouetteTouched:(UIButton*)silhouette
-{
-    if (self.selectedCardView == nil)
-        return;
-    
-    NSInteger index = [self.silhouettes indexOfObject:silhouette];
-    
-    // Card and silhouette match
-    if (self.selectedCardView.cardID == [self.silhouetteSequence[index] integerValue]) {
+    if (self.selectedObject != nil && [self.selectedObject class] != [sender class]) {
         
-        // Lock card movement
-        self.selectedCardView.panGestureRecognizer.enabled = NO;
+        CardView *card       = (CardView*)(([self.selectedObject class] == [CardView class]) ? self.selectedObject : sender);
+        UIButton *silhouette = (UIButton*)(([self.selectedObject class] == [UIButton class]) ? self.selectedObject : sender);
         
-        // Move card
-        [UIView animateWithDuration:.6 delay:.0 usingSpringWithDamping:.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        NSInteger index = [self.silhouettes indexOfObject:silhouette];
+        if (card.cardID == [self.silhouetteSequence[index] integerValue]) { // Correct match
             
-            self.selectedCardView.center = silhouette.center;
+            // Lock card movement
+            card.panGestureRecognizer.enabled = NO;
             
-        } completion:nil];
+            // Move card
+            [UIView animateWithDuration:.6 delay:.0 usingSpringWithDamping:.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+                
+                card.center = silhouette.center;
+                
+            } completion:nil];
+            
+            
+        }
+        else { // Incorrect match
+            
+            // Error sound
+            
+        }
         
+        // Unhighlight booth card and silhouette
+        
+        self.selectedObject = nil;
     }
     else {
-        // Error sound
+        // highlight sender
         
-        [self.selectedCardView flashCardWithColor:[UIColor redColor]];
+        // unhighlight selected object
         
-        // Move to original place
-        [UIView animateWithDuration:1.0 delay:.0 usingSpringWithDamping:.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-            
-            [self.selectedCardView moveToOriginalPosition];
-            
-        } completion:nil];
+        self.selectedObject = sender;
     }
-    
-    // Clear selection
-    self.selectedCardView = nil;
 }
 
 
