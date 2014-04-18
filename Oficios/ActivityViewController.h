@@ -2,7 +2,7 @@
 //  ViewController.h
 //  Oficios
 //
-//  Created by Pablo * on 11/04/14.
+//  Created by Pablo Camiletti on 11/04/14.
 //  Copyright (c) 2014 DSIC. All rights reserved.
 //
 
@@ -25,7 +25,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *activityImageView;
 @property (strong, nonatomic) IBOutletCollection(CardView) NSArray *cardViewsArray;
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *silhouettes;
-
+@property (strong, nonatomic) CAEmitterLayer *fireworksEmitter;
 
 - (IBAction) objectTouched:(UIControl*)sender;
 

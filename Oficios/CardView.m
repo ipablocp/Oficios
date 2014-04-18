@@ -2,7 +2,7 @@
 //  CardImageView.m
 //  Oficios
 //
-//  Created by Pablo * on 11/04/14.
+//  Created by Pablo Camiletti on 11/04/14.
 //  Copyright (c) 2014 DSIC. All rights reserved.
 //
 
@@ -115,6 +115,18 @@
     }
     
     return _imageView;
+}
+
+
+- (UIImageView *)starImageView
+{
+    if (_starImageView == nil) {
+        _starImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Star"]];
+        _starImageView.center = CGPointMake(self.bounds.size.width/2.0, self.bounds.size.height/2.0);
+        [self addSubview:_starImageView];
+    }
+    
+    return _starImageView;
 }
 
 

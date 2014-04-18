@@ -2,7 +2,7 @@
 //  ViewController.m
 //  Oficios
 //
-//  Created by Pablo * on 11/04/14.
+//  Created by Pablo Camiletti on 11/04/14.
 //  Copyright (c) 2014 DSIC. All rights reserved.
 //
 
@@ -34,6 +34,8 @@
         card.delegate = self;
         [card addTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
     }
+    
+    
 }
 
 
@@ -59,11 +61,11 @@
 
 - (void) loadActivity
 {
-    _numberOfCards = 6;
-    _numberOfSilhouettes = 3;
-    _maxAcceptableDistance = 30.0;
-    _maxAcceptableRotation = 25.0;
-    //_maxAcceptableScale = ;
+    _numberOfCards          = 6;
+    _numberOfSilhouettes    = 3;
+    _maxAcceptableDistance  = 30.0;
+    _maxAcceptableRotation  = 25.0;
+    _maxAcceptableScale     = 1.2;
     
     // Load activity image
     self.activityImageView.image = [UIImage imageNamed:@"imagen_tema"];
@@ -97,6 +99,9 @@
 
 - (void)cardEndedInteracting:(CardView *)card
 {
+    // Clear selection
+    self.selectedObject = nil;
+    
     [self.silhouettes enumerateObjectsUsingBlock:^(UIButton *silhouette, NSUInteger idx, BOOL *stop) {
         
         // Check card is close to a silhouette
@@ -108,18 +113,35 @@
                 
                 // Lock position
                 card.panGestureRecognizer.enabled = NO;
+                silhouette.userInteractionEnabled = NO;
+                [card removeTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
+                [silhouette removeTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
                 
                 [UIView animateWithDuration:.6 delay:.0 usingSpringWithDamping:.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
                     
                     card.center = silhouette.center;
                     
-                } completion:^(BOOL finished) {
+                } completion:nil];
+                
+                if ([self hasCardProperRotationAndScale:card]) {
+                    
+                    // Disable rest of interaction
+                    card.pinchGestureRecognizer.enabled = NO;
+                    card.rotationGestureRecognizer.enabled = NO;
+                    
+                    // Finish alignment
+                    [UIView animateWithDuration:.3 animations:^{
+                        card.transform = CGAffineTransformIdentity;
+                    }];
+                    
                     
                     // Star explotion
                     
                     // Fixed star
+                    card.starImageView.hidden = NO;
                     
-                }];
+                    silhouette.hidden = YES;
+                };
             }
             else {
                 // Error sound
@@ -140,6 +162,8 @@
 }
 
 
+#pragma mark - Matching touching silhouette and card
+
 - (IBAction) objectTouched:(UIControl*)sender
 {
     if (self.selectedObject != nil && [self.selectedObject class] != [sender class]) {
@@ -152,6 +176,8 @@
             
             // Lock card movement
             card.panGestureRecognizer.enabled = NO;
+            [card removeTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
+            [silhouette removeTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
             
             // Move card
             [UIView animateWithDuration:.6 delay:.0 usingSpringWithDamping:.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
@@ -159,7 +185,6 @@
                 card.center = silhouette.center;
                 
             } completion:nil];
-            
             
         }
         else { // Incorrect match
@@ -182,6 +207,20 @@
 }
 
 
+- (BOOL) hasCardProperRotationAndScale:(CardView*)card
+{
+    CGFloat rotation = fabs((180 * (atan2(card.transform.b, card.transform.a))) / M_PI);
+    CGFloat scale = sqrt((card.transform.a * card.transform.a) + (card.transform.c * card.transform.c));
+    NSLog(@"rotation angle = %f, scale = %f", rotation, scale);
+
+    if ((rotation <= self.maxAcceptableRotation || 360 - rotation <= self.maxAcceptableRotation) &&
+        (scale <= self.maxAcceptableScale))
+        return YES;
+    else
+        return NO;
+}
+
+
 #pragma mark - XML parsing
 /*
 - (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName {
@@ -193,12 +232,52 @@
 */
 
 
+#pragma mark - Utility methods
+
 - (CGFloat) distanceBetweenPoint:(CGPoint)p1 andPoint:(CGPoint)p2
 {
     CGFloat xDist = (p2.x - p1.x);
     CGFloat yDist = (p2.y - p1.y);
     CGFloat distance = sqrt((xDist * xDist) + (yDist * yDist));
     return distance;
+}
+
+
+- (CAEmitterLayer*)fireworksEmitter
+{
+    if (_fireworksEmitter == nil) {
+        
+        _fireworksEmitter = [CAEmitterLayer layer];
+        CGRect viewBounds = self.view.layer.bounds;
+        _fireworksEmitter.emitterPosition = CGPointMake(viewBounds.size.width/2.0, viewBounds.size.height/2);
+        _fireworksEmitter.emitterSize	= CGSizeMake(viewBounds.size.width/2.0, 0.0);
+        _fireworksEmitter.emitterMode	= kCAEmitterLayerOutline;
+        _fireworksEmitter.emitterShape	= kCAEmitterLayerLine;
+        _fireworksEmitter.renderMode	= kCAEmitterLayerAdditive;
+        _fireworksEmitter.seed = (arc4random()%100)+1;
+        
+        CAEmitterCell* spark = [CAEmitterCell emitterCell];
+        
+        spark.birthRate			= 400;
+        spark.velocity			= 125;
+        spark.emissionRange		= 2* M_PI;	// 360 deg
+        spark.yAcceleration		= 75;		// gravity
+        spark.lifetime			= 3;
+        
+        spark.contents			= (id) [[UIImage imageNamed:@"Star.png"] CGImage];
+        spark.scaleSpeed		=-0.2;
+        spark.greenSpeed		=-0.1;
+        spark.redSpeed			= 0.4;
+        spark.blueSpeed			=-0.1;
+        spark.alphaSpeed		=-0.25;
+        spark.spin				= 2* M_PI;
+        spark.spinRange			= 2* M_PI;
+        
+        _fireworksEmitter.emitterCells = @[spark];
+        
+    }
+    
+    return _fireworksEmitter;
 }
 
 

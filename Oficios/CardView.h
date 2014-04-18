@@ -2,7 +2,7 @@
 //  CardImageView.h
 //  Oficios
 //
-//  Created by Pablo * on 11/04/14.
+//  Created by Pablo Camiletti on 11/04/14.
 //  Copyright (c) 2014 DSIC. All rights reserved.
 //
 
@@ -20,6 +20,7 @@
 
 // UI
 @property (strong, nonatomic) UIImageView *imageView;
+@property (strong, nonatomic) UIImageView *starImageView;
 
 // Gesture recognizers
 @property (nonatomic, weak) IBOutlet UIPanGestureRecognizer *panGestureRecognizer;
