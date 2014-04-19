@@ -9,6 +9,7 @@
 
 #import <UIKit/UIKit.h>
 #import "CardView.h"
+@import AudioToolbox;
 
 
 @interface ActivityViewController : UIViewController <CardViewDelegate, NSXMLParserDelegate>
@@ -26,6 +27,10 @@
 @property (strong, nonatomic) IBOutletCollection(CardView) NSArray *cardViewsArray;
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *silhouettes;
 @property (strong, nonatomic) CAEmitterLayer *fireworksEmitter;
+
+// Sounds
+@property (strong, nonatomic) NSURL *correctSoundPath;
+@property (strong, nonatomic) NSURL *incorrectSoundPath;
 
 - (IBAction) objectTouched:(UIControl*)sender;
 

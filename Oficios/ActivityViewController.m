@@ -92,6 +92,10 @@
         UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"sil_%i", i]];
         [silhouette setImage:image forState:UIControlStateNormal];
     }
+    
+    // Sounds
+    self.correctSoundPath = [[NSBundle mainBundle] URLForResource:@"Correct" withExtension:@"wav"];
+    self.incorrectSoundPath = [[NSBundle mainBundle] URLForResource:@"Incorrect" withExtension:@"wav"];
 }
 
 
@@ -111,40 +115,50 @@
             NSInteger silhouetteID = [self.silhouetteSequence[idx] integerValue];
             if (card.cardID == silhouetteID) {
                 
-                // Lock position
-                card.panGestureRecognizer.enabled = NO;
-                silhouette.userInteractionEnabled = NO;
-                [card removeTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
-                [silhouette removeTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
-                
-                [UIView animateWithDuration:.6 delay:.0 usingSpringWithDamping:.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+                if( !CGPointEqualToPoint(card.center, silhouette.center) ){
                     
-                    card.center = silhouette.center;
+                    // Lock position
+                    card.panGestureRecognizer.enabled = NO;
+                    silhouette.userInteractionEnabled = NO;
+                    [card removeTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
+                    [silhouette removeTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
                     
-                } completion:nil];
+                    [UIView animateWithDuration:.6 delay:.0 usingSpringWithDamping:.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+                        
+                        card.center = silhouette.center;
+                        
+                    } completion:nil];
+                    
+                }
                 
                 if ([self hasCardProperRotationAndScale:card]) {
                     
                     // Disable rest of interaction
                     card.pinchGestureRecognizer.enabled = NO;
                     card.rotationGestureRecognizer.enabled = NO;
+                    silhouette.hidden = YES;
                     
                     // Finish alignment
                     [UIView animateWithDuration:.3 animations:^{
                         card.transform = CGAffineTransformIdentity;
                     }];
                     
-                    
                     // Star explotion
                     
-                    // Fixed star
-                    card.starImageView.hidden = NO;
+                    // Correct sound
+                    [self playCorrectSound];
                     
-                    silhouette.hidden = YES;
-                };
+                    // Fix star
+                    card.starImageView.transform = CGAffineTransformMakeScale(.0, .0);
+                    [UIView animateWithDuration:.3 animations:^{
+                        card.starImageView.transform = CGAffineTransformMakeScale(1.0, 1.0);
+                    }];
+                }
+                
             }
             else {
                 // Error sound
+                [self playIncorrectSound];
                 
                 [card flashCardWithColor:[UIColor redColor]];
                 
@@ -230,6 +244,26 @@
     }
 }
 */
+
+
+#pragma mark - Sounds
+
+- (void) playCorrectSound
+{
+    SystemSoundID correctSoundID;
+    AudioServicesCreateSystemSoundID((__bridge CFURLRef)self.correctSoundPath, &correctSoundID);
+    AudioServicesPlaySystemSound(correctSoundID);
+    //AudioServicesDisposeSystemSoundID(correctSoundID);
+}
+
+
+- (void) playIncorrectSound
+{
+    SystemSoundID incorrectSoundID;
+    AudioServicesCreateSystemSoundID((__bridge CFURLRef)self.incorrectSoundPath, &incorrectSoundID);
+    AudioServicesPlaySystemSound(incorrectSoundID);
+    //AudioServicesDisposeSystemSoundID(incorrectSoundID);
+}
 
 
 #pragma mark - Utility methods

@@ -36,6 +36,8 @@
 		6EE8DC5018F87B5C00F7E6E8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EE8DC3218F87B5C00F7E6E8 /* UIKit.framework */; };
 		6EE8DC5818F87B5C00F7E6E8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6EE8DC5618F87B5C00F7E6E8 /* InfoPlist.strings */; };
 		6EE8DC5A18F87B5C00F7E6E8 /* OficiosTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EE8DC5918F87B5C00F7E6E8 /* OficiosTests.m */; };
+		6EF6186F1902991100C327C6 /* Correct.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6EF6186D1902991100C327C6 /* Correct.wav */; };
+		6EF618701902991100C327C6 /* Incorrect.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6EF6186E1902991100C327C6 /* Incorrect.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +86,8 @@
 		6EE8DC5518F87B5C00F7E6E8 /* OficiosTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OficiosTests-Info.plist"; sourceTree = "<group>"; };
 		6EE8DC5718F87B5C00F7E6E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6EE8DC5918F87B5C00F7E6E8 /* OficiosTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OficiosTests.m; sourceTree = "<group>"; };
+		6EF6186D1902991100C327C6 /* Correct.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Correct.wav; sourceTree = "<group>"; };
+		6EF6186E1902991100C327C6 /* Incorrect.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Incorrect.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -187,6 +191,8 @@
 		6EE8DC3518F87B5C00F7E6E8 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				6EF6186D1902991100C327C6 /* Correct.wav */,
+				6EF6186E1902991100C327C6 /* Incorrect.wav */,
 				6E591DA71901C68E00D157EA /* Star.png */,
 				6E9CBEB718F88D1200BDF62A /* tema */,
 				6EE8DC3618F87B5C00F7E6E8 /* Oficios-Info.plist */,
@@ -296,6 +302,7 @@
 				6E9CBECC18F88D1200BDF62A /* obj_5.png in Resources */,
 				6E9CBECA18F88D1200BDF62A /* obj_3.png in Resources */,
 				6E9CBED018F88D1200BDF62A /* sil_3.png in Resources */,
+				6EF618701902991100C327C6 /* Incorrect.wav in Resources */,
 				6E591DA81901C68E00D157EA /* Star.png in Resources */,
 				6E9CBEC818F88D1200BDF62A /* obj_1.png in Resources */,
 				6E9CBECE18F88D1200BDF62A /* sil_1.png in Resources */,
@@ -308,6 +315,7 @@
 				6E9CBECB18F88D1200BDF62A /* obj_4.png in Resources */,
 				6E9CBECD18F88D1200BDF62A /* sil_0.png in Resources */,
 				6EE8DC4218F87B5C00F7E6E8 /* Main.storyboard in Resources */,
+				6EF6186F1902991100C327C6 /* Correct.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

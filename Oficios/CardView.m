@@ -45,7 +45,36 @@
 
 - (void) flashCardWithColor:(UIColor*)color
 {
+    CIImage *ciImage = [CIImage imageWithCGImage:self.imageView.image.CGImage];
     
+    CIFilter *filter = [CIFilter filterWithName:@"CIFalseColor"
+                                  keysAndValues: @"inputImage", ciImage,
+                                                 @"inputColor0", [CIColor colorWithCGColor:color.CGColor],
+                                                 @"inputColor1", [CIColor colorWithCGColor:color.CGColor], nil];
+    
+    CIImage *outputImage = [filter outputImage];
+    
+    UIImage *coloredImage = [UIImage imageWithCIImage:outputImage];
+    
+    UIImage *originalImage = self.imageView.image;
+    [UIView transitionWithView:self.imageView duration:.6 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        
+        self.imageView.image = coloredImage;
+        
+    } completion:^(BOOL finished) {
+        
+        if (finished) {
+            
+            [UIView transitionWithView:self.imageView duration:.6 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+                
+                self.imageView.image = originalImage;
+                
+            } completion:nil];
+            
+        }
+       
+        
+    }];
 }
 
 
