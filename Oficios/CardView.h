@@ -23,9 +23,9 @@
 @property (strong, nonatomic) UIImageView *starImageView;
 
 // Gesture recognizers
-@property (nonatomic, weak) IBOutlet UIPanGestureRecognizer *panGestureRecognizer;
-@property (nonatomic, weak) IBOutlet UIRotationGestureRecognizer *rotationGestureRecognizer;
-@property (nonatomic, weak) IBOutlet UIPinchGestureRecognizer *pinchGestureRecognizer;
+@property (strong, nonatomic) UIPanGestureRecognizer *panGestureRecognizer;
+@property (strong, nonatomic) UIRotationGestureRecognizer *rotationGestureRecognizer;
+@property (strong, nonatomic) UIPinchGestureRecognizer *pinchGestureRecognizer;
 
 // Delegate
 @property (weak, nonatomic) id<CardViewDelegate> delegate;
@@ -36,9 +36,9 @@
 - (void) moveToOriginalPosition;
 
 // Gestures handlers
-- (IBAction)handlePan:(UIPanGestureRecognizer*)recognizer;
-- (IBAction)handleRotation:(UIRotationGestureRecognizer*)recognizer;
-- (IBAction)handlePinch:(UIPinchGestureRecognizer*)recognizer;
+- (void)handlePan:(UIPanGestureRecognizer*)recognizer;
+- (void)handleRotation:(UIRotationGestureRecognizer*)recognizer;
+- (void)handlePinch:(UIPinchGestureRecognizer*)recognizer;
 
 @end
 

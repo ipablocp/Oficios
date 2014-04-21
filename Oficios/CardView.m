@@ -13,7 +13,16 @@
 
 #pragma mark - Init methods
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (id) init
+{
+    if (self = [super init]) {
+        [self setup];
+    }
+    
+    return self;
+}
+
+- (id) initWithCoder:(NSCoder *)aDecoder
 {
     if (self = [super initWithCoder:aDecoder]) {
         [self setup];
@@ -23,7 +32,7 @@
 }
 
 
-- (id)initWithFrame:(CGRect)frame
+- (id) initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
         [self setup];
@@ -38,6 +47,19 @@
     self.imageView.layer.magnificationFilter = kCAFilterTrilinear;
     self.imageView.layer.minificationFilter = kCAFilterTrilinear;
     self.imageView.layer.shouldRasterize = YES;
+    
+    // Init gestures
+    self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
+    self.panGestureRecognizer.delegate = self;
+    [self addGestureRecognizer:self.panGestureRecognizer];
+    
+    self.rotationGestureRecognizer = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotation:)];
+    self.rotationGestureRecognizer.delegate = self;
+    [self addGestureRecognizer:self.rotationGestureRecognizer];
+    
+    self.pinchGestureRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
+    self.pinchGestureRecognizer.delegate = self;
+    [self addGestureRecognizer:self.pinchGestureRecognizer];
 }
 
 
@@ -72,7 +94,6 @@
             } completion:nil];
             
         }
-       
         
     }];
 }
@@ -86,7 +107,7 @@
 
 #pragma mark - Gestures handlers
 
-- (IBAction)handlePan:(UIPanGestureRecognizer*)recognizer
+- (void) handlePan:(UIPanGestureRecognizer*)recognizer
 {
     CGPoint translation = [recognizer translationInView:self.superview];
     self.center = CGPointMake(self.center.x + translation.x, self.center.y + translation.y);
@@ -101,7 +122,7 @@
 }
 
 
-- (IBAction)handleRotation:(UIRotationGestureRecognizer*)recognizer
+- (void) handleRotation:(UIRotationGestureRecognizer*)recognizer
 {
     recognizer.view.transform = CGAffineTransformRotate(recognizer.view.transform, recognizer.rotation);
     
@@ -115,7 +136,7 @@
 }
 
 
-- (IBAction)handlePinch:(UIPinchGestureRecognizer*)recognizer
+- (void) handlePinch:(UIPinchGestureRecognizer*)recognizer
 {
     self.transform = CGAffineTransformScale(self.transform, recognizer.scale, recognizer.scale);
     
@@ -129,14 +150,14 @@
 }
 
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+- (BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
     return YES;
 }
 
 
 #pragma mark - Property implementation
 
-- (UIImageView *)imageView
+- (UIImageView *) imageView
 {
     if (_imageView == nil) {
         _imageView = [[UIImageView alloc] initWithFrame:self.bounds];
@@ -147,7 +168,7 @@
 }
 
 
-- (UIImageView *)starImageView
+- (UIImageView *) starImageView
 {
     if (_starImageView == nil) {
         _starImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Star"]];
@@ -159,5 +180,19 @@
 }
 
 
+- (void) setBounds:(CGRect)bounds
+{
+    [super setBounds:bounds];
+    
+    self.imageView.frame = bounds;
+}
+
+
+- (void)setFrame:(CGRect)frame
+{
+    [super setFrame:frame];
+    
+    self.imageView.frame = self.bounds;
+}
 
 @end
