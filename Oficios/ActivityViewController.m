@@ -146,7 +146,7 @@
 {
     if (self.selectedObject != nil && [self.selectedObject class] != [sender class]) {
         
-        CardView *card       = (CardView*)(([self.selectedObject class] == [CardView class]) ? self.selectedObject : sender);
+        CardView *card = (CardView*)(([self.selectedObject class] == [CardView class]) ? self.selectedObject : sender);
         SilhouetteButton *silhouette = (SilhouetteButton*)(([self.selectedObject class] == [UIButton class]) ? self.selectedObject : sender);
         
         if (card.cardID == silhouette.silhouetteID) { // Correct match
