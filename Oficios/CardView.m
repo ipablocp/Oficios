@@ -7,6 +7,8 @@
 //
 
 #import "CardView.h"
+#import "UIImage+Extensions.h"
+
 
 @implementation CardView
 
@@ -15,18 +17,16 @@
 
 - (id) init
 {
-    if (self = [super init]) {
+    if (self = [super init])
         [self setup];
-    }
     
     return self;
 }
 
 - (id) initWithCoder:(NSCoder *)aDecoder
 {
-    if (self = [super initWithCoder:aDecoder]) {
+    if (self = [super initWithCoder:aDecoder])
         [self setup];
-    }
     
     return self;
 }
@@ -34,9 +34,9 @@
 
 - (id) initWithFrame:(CGRect)frame
 {
-    if (self = [super initWithFrame:frame]) {
+    if (self = [super initWithFrame:frame])
         [self setup];
-    }
+
     return self;
 }
 
@@ -67,37 +67,17 @@
 
 - (void) flashCardWithColor:(UIColor*)color
 {
-    CIImage *ciImage = [CIImage imageWithCGImage:self.imageView.image.CGImage];
-    
-    CIFilter *filter = [CIFilter filterWithName:@"CIFalseColor"
-                                  keysAndValues: @"inputImage", ciImage,
-                                                 @"inputColor0", [CIColor colorWithCGColor:color.CGColor],
-                                                 @"inputColor1", [CIColor colorWithCGColor:color.CGColor], nil];
-    
-    CIImage *outputImage = [filter outputImage];
-    
-    UIImage *coloredImage = [UIImage imageWithCIImage:outputImage];
-    
     UIImage *originalImage = self.imageView.image;
-    [UIView transitionWithView:self.imageView duration:.6 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+    
+    self.imageView.image = [originalImage imageWithOverlayColor:color];
+    
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.6 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
-        self.imageView.image = coloredImage;
+        self.imageView.image = originalImage;
         
-    } completion:^(BOOL finished) {
-        
-        if (finished) {
-            
-            [UIView transitionWithView:self.imageView duration:.6 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-                
-                self.imageView.image = originalImage;
-                
-            } completion:nil];
-            
-        }
-        
-    }];
+    });
 }
-
 
 - (void) moveToOriginalPosition
 {
