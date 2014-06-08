@@ -120,7 +120,7 @@
         User *user = [self.users lastObject];
         Chapter *chapter = [user.chapters lastObject];
         Task *task = [[Task alloc] init];
-        task.taskID = [attributeDict objectForKey:@"id"];
+        task.taskID = [[attributeDict objectForKey:@"id"] integerValue];
         task.taskName = [attributeDict objectForKey:@"name"];
         [chapter.tasks addObject:task];
     }

@@ -49,25 +49,11 @@
 {
     [super viewWillAppear:animated];
     
-    // Parse configuration file
-    NSString *nameOfFile = [NSString stringWithFormat:@"tarea_%@", self.task.taskID];
-    NSURL *fileURL = [[NSBundle mainBundle] URLForResource:nameOfFile withExtension:@"config"];
-    NSXMLParser *parser = [[NSXMLParser alloc] initWithContentsOfURL:fileURL];
-    [parser setDelegate:self];
-    BOOL parsedSuccessfully = [parser parse];
+    [self reloadUIForCurrentTask];
     
-    if (parsedSuccessfully) {
-        [self arrangeSilhouettes];
-        [self arrageCards];
-        
-        self.remainingSilhouettes = self.silhouettes.count;
-        
-        // Set image quality
-        self.activityImageView.layer.minificationFilter = kCAFilterTrilinear;
-        self.activityImageView.layer.magnificationFilter = kCAFilterTrilinear;
-    }
-    else
-        NSLog(@"Error parsing the file %@", nameOfFile);
+    // Set image quality
+    self.activityImageView.layer.minificationFilter = kCAFilterTrilinear;
+    self.activityImageView.layer.magnificationFilter = kCAFilterTrilinear;
 }
 
 
@@ -294,14 +280,26 @@
 
 #pragma mark - XML parsing
 
+- (BOOL) readTaskFile
+{
+    // Parse configuration file
+    NSString *nameOfFile = [NSString stringWithFormat:@"tarea_%d", self.task.taskID];
+    NSURL *fileURL = [[NSBundle mainBundle] URLForResource:nameOfFile withExtension:@"config"];
+    NSXMLParser *parser = [[NSXMLParser alloc] initWithContentsOfURL:fileURL];
+    [parser setDelegate:self];
+    BOOL success = [parser parse];
+    
+    if (!success)
+        NSLog(@"Error parsing the file %@", nameOfFile);
+    
+    return success;
+}
+
+
 - (void) parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict
 {
-    // Load activity image
-    if ([elementName isEqual:@"tarea"])
-        self.activityImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"imagen_tema_%i", [[attributeDict objectForKey:@"id"] integerValue]]];
-    
     // Process Silhouettes
-    else if ([elementName isEqual:@"serie"]) {
+    if ([elementName isEqual:@"serie"]) {
         NSString *itemsString = [attributeDict objectForKey:@"items"];
         NSArray *components = [itemsString componentsSeparatedByString:@" "];
         
@@ -401,7 +399,7 @@
     [formatter setDateFormat:@"dd/MM/yyyy HH:mm"];
     
     [resultsString appendFormat:@"<resultados fecha=\"%@\"> \n", [formatter stringFromDate:[NSDate date]]];
-    [resultsString appendFormat:@"<tarea id=\"%@\" resultado=\"%d\"> \n", self.task.taskID, (self.remainingSilhouettes) ? 0 : 1];
+    [resultsString appendFormat:@"<tarea id=\"%d\" resultado=\"%d\"> \n", self.task.taskID, (self.remainingSilhouettes) ? 0 : 1];
     
     // Write all the cards
     for (CardView *card in self.cardViewsArray) {
@@ -460,6 +458,17 @@
 
 
 #pragma mark - Utility methods
+
+- (void) reloadUIForCurrentTask
+{
+    [self arrangeSilhouettes];
+    [self arrageCards];
+    
+    self.activityImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"imagen_tema_%i", self.task.taskID]];
+    
+    self.remainingSilhouettes = self.silhouettes.count;
+}
+
 
 - (BOOL) hasCardProperRotation:(CardView*)card
 {
@@ -648,6 +657,28 @@
         _cardViewsArray = [NSMutableArray array];
     
     return _cardViewsArray;
+}
+
+
+- (void) setTask:(Task *)task
+{
+    _task = task;
+    
+    // Remove previous cards
+    [self.cardViewsArray enumerateObjectsUsingBlock:^(CardView *card, NSUInteger idx, BOOL *stop) {
+        [card removeFromSuperview];
+    }];
+    self.cardViewsArray = nil;
+    
+    // Remove previous silhouettes
+    [self.silhouettes enumerateObjectsUsingBlock:^(SilhouetteButton *silhouette, NSUInteger idx, BOOL *stop) {
+        [silhouette removeFromSuperview];
+    }];
+    self.silhouettes = nil;
+    
+    self.selectedObject = nil;
+    
+    [self readTaskFile];
 }
 
 

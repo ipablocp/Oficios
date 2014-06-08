@@ -10,5 +10,5 @@
 
 @interface Task : NSObject
 @property (strong, nonatomic) NSString *taskName;
-@property (strong, nonatomic) NSString *taskID;
+@property (nonatomic) NSInteger taskID;
 @end

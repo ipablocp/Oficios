@@ -16,16 +16,11 @@
 
 @interface ChapterTableViewController ()
 @property (strong, nonatomic) NSIndexPath *currentTaskIndexPath;
+@property (strong, nonatomic) ActivityViewController *currentActivityViewController;
 @end
 
 
 @implementation ChapterTableViewController
-
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-}
 
 
 #pragma mark - Table view data source
@@ -63,20 +58,16 @@
 {
     self.currentTaskIndexPath = indexPath;
     Chapter *chapter = self.user.chapters[indexPath.section];
-    [self presentActivityWithTask:chapter.tasks[indexPath.row] animated:YES];
-}
-
-
-- (void) presentActivityWithTask:(Task*)task animated:(BOOL)animated
-{
+    
     UINavigationController *navigationController = [self.storyboard instantiateViewControllerWithIdentifier:@"ActivityNavigationController"];
     ActivityViewController *activityViewController = (ActivityViewController*)[navigationController topViewController];
+    self.currentActivityViewController = activityViewController;
     
-    activityViewController.task = task;
+    activityViewController.task = chapter.tasks[indexPath.row];
     activityViewController.delegate = self;
     activityViewController.resultsFileName = [NSString stringWithFormat:@"%@.results", self.user.userID];
     
-    [self.navigationController presentViewController:navigationController animated:animated completion:nil];
+    [self.navigationController presentViewController:navigationController animated:YES completion:nil];
 }
 
 
@@ -90,23 +81,27 @@
         
         // There is another task in the current chapter
         if (self.currentTaskIndexPath.row < [self.tableView numberOfRowsInSection:self.currentTaskIndexPath.section]-1) {
-            [self.navigationController dismissViewControllerAnimated:NO completion:nil];
             self.currentTaskIndexPath = [NSIndexPath indexPathForItem:self.currentTaskIndexPath.row+1 inSection:self.currentTaskIndexPath.section];
             nextTask = [[self.user.chapters[self.currentTaskIndexPath.section] tasks] objectAtIndex:self.currentTaskIndexPath.row];
-            [self presentActivityWithTask:nextTask animated:NO];
+            self.currentActivityViewController.task = nextTask;
+            [self.currentActivityViewController reloadUIForCurrentTask];
         }
         // Load the activity of next chapter
         else if (self.currentTaskIndexPath.section < [self.tableView numberOfSections]-1){
-            [self.navigationController dismissViewControllerAnimated:NO completion:nil];
             self.currentTaskIndexPath = [NSIndexPath indexPathForItem:0 inSection:self.currentTaskIndexPath.section+1];
             nextTask = [[self.user.chapters[self.currentTaskIndexPath.section] tasks] objectAtIndex:self.currentTaskIndexPath.row];
-            [self presentActivityWithTask:nextTask animated:NO];
+            self.currentActivityViewController.task = nextTask;
+            [self.currentActivityViewController reloadUIForCurrentTask];
         }
-        else
+        else {
+            self.currentActivityViewController = nil;
             [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+        }
     }
-    else
+    else {
+        self.currentActivityViewController = nil;
         [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    }
 }
 
 

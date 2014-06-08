@@ -43,6 +43,8 @@
 
 - (IBAction) closeActivity;
 
+- (void) reloadUIForCurrentTask;
+
 @end
 
 
