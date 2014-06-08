@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SettingsTableViewController.h"
 
 
-@interface UsersTableViewController : UITableViewController <UISplitViewControllerDelegate, NSXMLParserDelegate>
+@interface UsersTableViewController : UITableViewController <UISplitViewControllerDelegate, NSXMLParserDelegate, SettingsTableViewControllerDelegate>
 
 @end

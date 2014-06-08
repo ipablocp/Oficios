@@ -16,9 +16,11 @@
 
 #define DEGREES_TO_RADIANS(angle) ((angle) / 180.0 * M_PI)
 
+
 @interface ActivityViewController ()
 @property (nonatomic, weak) UIControl *selectedObject;
 @property (nonatomic) clock_t creationTime;
+@property (nonatomic) BOOL isCompletionInOrder;
 @end
 
 
@@ -30,6 +32,8 @@
 - (void) viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.isCompletionInOrder = [[NSUserDefaults standardUserDefaults] boolForKey:@"Completar siluetas en orden"];
 }
 
 
@@ -114,8 +118,10 @@
         // Check card is close to a silhouette
         if ([self distanceBetweenPoint:card.center andPoint:silhouette.center] <= self.maxAcceptableDistance) {
             
+            BOOL admissible = [self shouldAcceptSilhouetteCompletionAtIndex:idx];
+            
             // Check is the correct silhouette
-            if (card.cardID == silhouette.silhouetteID && silhouette.hidden == NO) {
+            if (admissible && card.cardID == silhouette.silhouetteID && silhouette.hidden == NO) {
                 
                 if( !CGPointEqualToPoint(card.center, silhouette.center) )
                     [self lockCardPosition:card overSilhouette:silhouette];
@@ -197,8 +203,11 @@
         }
         interaction.end = clock() - self.creationTime;
         
+        NSInteger idx = [self.silhouettes indexOfObject:silhouette];
+        BOOL admissible = [self shouldAcceptSilhouetteCompletionAtIndex:idx];
+        
         // Correct match
-        if (card.cardID == silhouette.silhouetteID) {
+        if (admissible && card.cardID == silhouette.silhouetteID) {
             
             // Lock card movement
             [self lockCardPosition:card overSilhouette:silhouette];
@@ -584,6 +593,24 @@
         return @"arrastrar";
     
     return nil;
+}
+
+
+- (BOOL) shouldAcceptSilhouetteCompletionAtIndex:(NSInteger)index
+{
+    if (self.isCompletionInOrder) {
+        if (index > 0) {
+            SilhouetteButton *previousSilhouette = self.silhouettes[index-1];
+            if (previousSilhouette.hidden == YES)
+                return YES;
+            else
+                return NO;
+        }
+        else
+            return YES;
+    }
+    else
+        return YES;
 }
 
 

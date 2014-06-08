@@ -64,7 +64,6 @@
 }
 
 
-
 - (NSIndexPath*)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (![[tableView indexPathForSelectedRow] isEqual:indexPath]) {
@@ -80,6 +79,18 @@
     }
     else
         return nil;
+}
+
+
+#pragma mark - Storyboard
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.destinationViewController isKindOfClass:[UINavigationController class]]){
+        UINavigationController *navigationController = segue.destinationViewController;
+        if ([navigationController.topViewController isKindOfClass:[SettingsTableViewController class]])
+            ((SettingsTableViewController*)navigationController.topViewController).delegate = self;
+    }
 }
 
 
@@ -126,6 +137,16 @@
     NSLog(@"XMLParser error: %@", [validationError localizedDescription]);
 }
 
+
+#pragma mark - Settings delegate
+
+- (void) settingsDidFinishEditting
+{
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+}
+
+
+#pragma mark - Property implementatio
 
 - (NSMutableArray*) users
 {

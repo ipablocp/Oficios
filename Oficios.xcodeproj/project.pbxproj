@@ -50,6 +50,8 @@
 		6EF618701902991100C327C6 /* Incorrect.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6EF6186E1902991100C327C6 /* Incorrect.wav */; };
 		6EF618721902A2CE00C327C6 /* tarea_1.config in Resources */ = {isa = PBXBuildFile; fileRef = 6EF618711902A2CE00C327C6 /* tarea_1.config */; };
 		6EF618751902E8AE00C327C6 /* SilhouetteButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF618741902E8AE00C327C6 /* SilhouetteButton.m */; };
+		6EFCC7D21944BD220062002D /* SettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EFCC7D11944BD220062002D /* SettingsTableViewController.m */; };
+		6EFCC7D51944C0C50062002D /* SettingsTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EFCC7D41944C0C50062002D /* SettingsTableViewCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -121,6 +123,10 @@
 		6EF618711902A2CE00C327C6 /* tarea_1.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tarea_1.config; sourceTree = "<group>"; };
 		6EF618731902E8AE00C327C6 /* SilhouetteButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SilhouetteButton.h; sourceTree = "<group>"; };
 		6EF618741902E8AE00C327C6 /* SilhouetteButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SilhouetteButton.m; sourceTree = "<group>"; };
+		6EFCC7D01944BD220062002D /* SettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsTableViewController.h; sourceTree = "<group>"; };
+		6EFCC7D11944BD220062002D /* SettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsTableViewController.m; sourceTree = "<group>"; };
+		6EFCC7D31944C0C50062002D /* SettingsTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsTableViewCell.h; sourceTree = "<group>"; };
+		6EFCC7D41944C0C50062002D /* SettingsTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsTableViewCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -257,9 +263,10 @@
 				6E53059F190D555D00DD9914 /* ChapterTableViewController.h */,
 				6E5305A0190D555D00DD9914 /* ChapterTableViewController.m */,
 				6E5305A2190D556D00DD9914 /* Actividad */,
+				6EFCC7D61944C0CE0062002D /* Settings */,
 				6EC7A6261943653000365A01 /* Modelo */,
-				6EE8DC4618F87B5C00F7E6E8 /* Images.xcassets */,
 				6EC7A62319435B6400365A01 /* Archivos de configuracion */,
+				6EE8DC4618F87B5C00F7E6E8 /* Images.xcassets */,
 				6EE8DC3518F87B5C00F7E6E8 /* Supporting Files */,
 			);
 			path = Oficios;
@@ -297,6 +304,17 @@
 				6EE8DC5618F87B5C00F7E6E8 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		6EFCC7D61944C0CE0062002D /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				6EFCC7D01944BD220062002D /* SettingsTableViewController.h */,
+				6EFCC7D11944BD220062002D /* SettingsTableViewController.m */,
+				6EFCC7D31944C0C50062002D /* SettingsTableViewCell.h */,
+				6EFCC7D41944C0C50062002D /* SettingsTableViewCell.m */,
+			);
+			name = Settings;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -415,6 +433,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6EFCC7D21944BD220062002D /* SettingsTableViewController.m in Sources */,
 				6EEE4CB11943A9C100DF9053 /* Interaction.m in Sources */,
 				6EE8DC4518F87B5C00F7E6E8 /* ActivityViewController.m in Sources */,
 				6EE8DC3F18F87B5C00F7E6E8 /* AppDelegate.m in Sources */,
@@ -428,6 +447,7 @@
 				6E53059B190D334E00DD9914 /* UsersTableViewController.m in Sources */,
 				6E5305A1190D555D00DD9914 /* ChapterTableViewController.m in Sources */,
 				6EE8DC3B18F87B5C00F7E6E8 /* main.m in Sources */,
+				6EFCC7D51944C0C50062002D /* SettingsTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
