@@ -16,7 +16,7 @@
 @protocol ActivityViewControllerDelegate;
 
 
-@interface ActivityViewController : UIViewController <CardViewDelegate, NSXMLParserDelegate>
+@interface ActivityViewController : UIViewController <CardViewDelegate, NSXMLParserDelegate, UIAlertViewDelegate>
 
 // Data
 @property (strong, nonatomic) Task *task;

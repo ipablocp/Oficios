@@ -34,6 +34,14 @@
     [super viewDidLoad];
     
     self.isCompletionInOrder = [[NSUserDefaults standardUserDefaults] boolForKey:@"Completar siluetas en orden"];
+    
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Nombre"
+                                                        message:@"Introduzca el nombre del niño"
+                                                       delegate:self
+                                              cancelButtonTitle:@"Cancelar"
+                                              otherButtonTitles:@"Empezar", nil];
+    alertView.alertViewStyle = UIAlertViewStylePlainTextInput;
+    [alertView show];
 }
 
 
@@ -454,6 +462,20 @@
 - (void) playIncorrectSound
 {
     AudioServicesPlaySystemSound(_incorrectSoundID);
+}
+
+
+#pragma mark - Alert view delegate
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 0) {
+        [self.delegate activityHasFinishedSuccessfully:NO];
+    }
+    else {
+        NSString *inputText = [[alertView textFieldAtIndex:0] text];
+        self.resultsFileName = [inputText stringByAppendingString:@".results"];
+    }
 }
 
 

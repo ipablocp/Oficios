@@ -65,7 +65,6 @@
     
     activityViewController.task = chapter.tasks[indexPath.row];
     activityViewController.delegate = self;
-    activityViewController.resultsFileName = [NSString stringWithFormat:@"%@.results", self.user.userID];
     
     [self.navigationController presentViewController:navigationController animated:YES completion:nil];
 }
