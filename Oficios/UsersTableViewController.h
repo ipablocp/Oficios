@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 
 
-@interface UsersTableViewController : UITableViewController <UISplitViewControllerDelegate>
+@interface UsersTableViewController : UITableViewController <UISplitViewControllerDelegate, NSXMLParserDelegate>
 
 @end

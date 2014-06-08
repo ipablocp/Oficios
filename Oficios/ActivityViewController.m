@@ -8,6 +8,8 @@
 
 
 #import "ActivityViewController.h"
+#import "CardInteractions.h"
+#import "Interaction.h"
 
 #define MIN_VERTICAL_MARGIN 50
 #define MIN_HORIZONTAL_MARGIN 10
@@ -16,6 +18,7 @@
 
 @interface ActivityViewController ()
 @property (nonatomic, weak) UIControl *selectedObject;
+@property (nonatomic) clock_t creationTime;
 @end
 
 
@@ -23,9 +26,18 @@
 
 
 #pragma mark - Lifecycle
+
 - (void) viewDidLoad
 {
     [super viewDidLoad];
+}
+
+
+- (IBAction) closeActivity
+{
+    [self saveResults];
+    
+    [self.delegate activityHasFinishedSuccessfully:NO];
 }
 
 
@@ -34,8 +46,8 @@
     [super viewWillAppear:animated];
     
     // Parse configuration file
-    NSString *nameOfFile = @"tarea_0.config";
-    NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"tarea_0" withExtension:@"config"];
+    NSString *nameOfFile = [NSString stringWithFormat:@"tarea_%@", self.task.taskID];
+    NSURL *fileURL = [[NSBundle mainBundle] URLForResource:nameOfFile withExtension:@"config"];
     NSXMLParser *parser = [[NSXMLParser alloc] initWithContentsOfURL:fileURL];
     [parser setDelegate:self];
     BOOL parsedSuccessfully = [parser parse];
@@ -44,12 +56,28 @@
         [self arrangeSilhouettes];
         [self arrageCards];
         
+        self.remainingSilhouettes = self.silhouettes.count;
+        
         // Set image quality
         self.activityImageView.layer.minificationFilter = kCAFilterTrilinear;
         self.activityImageView.layer.magnificationFilter = kCAFilterTrilinear;
     }
     else
         NSLog(@"Error parsing the file %@", nameOfFile);
+}
+
+
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    self.creationTime = clock();
+}
+
+
+- (void) viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
 }
 
 
@@ -62,10 +90,24 @@
 
 #pragma mark - Card delegate methods
 
+- (void) cardView:(CardView *)card willBegingRecognizingGesture:(UIGestureRecognizer *)gestureRecognizer
+{
+    // Create a new interaction record
+    Interaction *newInteraction = [[Interaction alloc] init];
+    newInteraction.name = [self nameForGesture:gestureRecognizer];
+    newInteraction.start = clock() - self.creationTime;
+    [card.interactions addObject:newInteraction];
+}
+
+
 - (void) cardEndedInteracting:(CardView *)card
 {
     // Clear selection
     self.selectedObject = nil;
+    
+    // Save interaction end time
+    Interaction *interaction = [card.interactions lastObject];
+    interaction.end = clock() - self.creationTime;
     
     [self.silhouettes enumerateObjectsUsingBlock:^(SilhouetteButton *silhouette, NSUInteger idx, BOOL *stop) {
         
@@ -75,37 +117,31 @@
             // Check is the correct silhouette
             if (card.cardID == silhouette.silhouetteID && silhouette.hidden == NO) {
                 
-                if( !CGPointEqualToPoint(card.center, silhouette.center) ){
-                    
-                    // Lock position
-                    card.panGestureRecognizer.enabled = NO;
-                    silhouette.userInteractionEnabled = NO;
-                    [card removeTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
-                    [silhouette removeTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
-                    
-                    [UIView animateWithDuration:.6 delay:.0 usingSpringWithDamping:.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-                        
-                        card.center = silhouette.center;
-                        
-                    } completion:nil];
-                    
-                }
+                if( !CGPointEqualToPoint(card.center, silhouette.center) )
+                    [self lockCardPosition:card overSilhouette:silhouette];
                 
-                if ([self hasCardProperRotationAndScale:card]) {
-                    
-                    // Disable rest of interaction
-                    card.pinchGestureRecognizer.enabled = NO;
-                    card.pinchGestureRecognizer.delegate = nil;
-                    [card removeGestureRecognizer:card.pinchGestureRecognizer];
+                if ([self hasCardProperRotation:card])
                     card.rotationGestureRecognizer.enabled = NO;
-                    card.rotationGestureRecognizer.delegate = nil;
-                    [card removeGestureRecognizer:card.rotationGestureRecognizer];
-                    silhouette.hidden = YES;
+                else
+                    card.rotationGestureRecognizer.enabled = YES;
+                
+                if ([self hasCardProperScale:card])
+                    card.pinchGestureRecognizer.enabled = NO;
+                else
+                    card.pinchGestureRecognizer.enabled = YES;
+                
+                // Card Completed
+                if ([self hasCardProperRotation:card] && [self hasCardProperScale:card]) {
                     
-                    // Finish alignment
                     [UIView animateWithDuration:.3 animations:^{
                         card.transform = CGAffineTransformIdentity;
                     }];
+                    
+                    silhouette.hidden = YES;
+                    
+                    interaction.isCorrect = YES;
+                    
+                    self.remainingSilhouettes--;
                     
                     // Star explotion
                     
@@ -113,10 +149,7 @@
                     [self playCorrectSound];
                     
                     // Fix star
-                    card.starImageView.transform = CGAffineTransformMakeScale(.0, .0);
-                    [UIView animateWithDuration:.3 animations:^{
-                        card.starImageView.transform = CGAffineTransformMakeScale(1.0, 1.0);
-                    }];
+                    [card showStarAnimated:YES];
                 }
                 
             }
@@ -144,29 +177,75 @@
 
 - (void) objectTouched:(UIControl*)sender
 {
+    // We'll save the start time if the first selected object is a silhouette
+    static clock_t startTime;
+    
     if (self.selectedObject != nil && [self.selectedObject class] != [sender class]) {
         
-        CardView *card = (CardView*)(([self.selectedObject class] == [CardView class]) ? self.selectedObject : sender);
-        SilhouetteButton *silhouette = (SilhouetteButton*)(([self.selectedObject class] == [UIButton class]) ? self.selectedObject : sender);
+        CardView *card = (CardView*)(([self.selectedObject isKindOfClass:[CardView class]]) ? self.selectedObject : sender);
+        SilhouetteButton *silhouette = (SilhouetteButton*)(([self.selectedObject isKindOfClass:[SilhouetteButton class]]) ? self.selectedObject : sender);
         
-        if (card.cardID == silhouette.silhouetteID) { // Correct match
+        // Register the interaction
+        Interaction *interaction;
+        // First selected object was a Card
+        if ([self.selectedObject isKindOfClass:[CardView class]])
+            interaction = [card.interactions lastObject];
+        // First selected object was a Silhouette
+        else {
+            interaction = [[Interaction alloc] initWithName:@"seleccion" startTime:startTime];
+            [card.interactions addObject:interaction];
+        }
+        interaction.end = clock() - self.creationTime;
+        
+        // Correct match
+        if (card.cardID == silhouette.silhouetteID) {
             
             // Lock card movement
-            card.panGestureRecognizer.enabled = NO;
-            [card removeTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
-            [silhouette removeTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
+            [self lockCardPosition:card overSilhouette:silhouette];
             
-            // Move card
-            [UIView animateWithDuration:.6 delay:.0 usingSpringWithDamping:.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+            if ([self hasCardProperRotation:card])
+                card.rotationGestureRecognizer.enabled = NO;
+            else
+                card.rotationGestureRecognizer.enabled = YES;
+            
+            if ([self hasCardProperScale:card])
+                card.pinchGestureRecognizer.enabled = NO;
+            else
+                card.pinchGestureRecognizer.enabled = YES;
+            
+            // Card Completed
+            if ([self hasCardProperRotation:card] && [self hasCardProperScale:card]) {
                 
-                card.center = silhouette.center;
+                [UIView animateWithDuration:.3 animations:^{
+                    card.transform = CGAffineTransformIdentity;
+                }];
                 
-            } completion:nil];
+                silhouette.hidden = YES;
+                
+                self.remainingSilhouettes--;
+                
+                interaction.isCorrect = YES;
+                
+                // Star explotion
+                
+                // Correct sound
+                [self playCorrectSound];
+                
+                // Fix star
+                [card showStarAnimated:YES];
+            }
+            else
+                interaction.isCorrect = NO;
             
         }
         else { // Incorrect match
             
             // Error sound
+            [self playIncorrectSound];
+            
+            [card flashCardWithColor:[UIColor redColor]];
+            
+            interaction.isCorrect = NO;
             
         }
         
@@ -180,30 +259,54 @@
         // unhighlight selected object
         
         self.selectedObject = sender;
+        
+        // In case the selected object is a card we create an interaction object right away
+        if ([sender isKindOfClass:[CardView class]]) {
+            CardView *card = (CardView*)sender;
+            Interaction *interaction = [[Interaction alloc] initWithName:@"seleccion" startTime:(clock() - self.creationTime)];
+            [card.interactions addObject:interaction];
+        }
+        else
+            startTime = clock() - self.creationTime;
     }
 }
 
 
-- (BOOL) hasCardProperRotationAndScale:(CardView*)card
+- (BOOL) hasCardProperRotation:(CardView*)card
 {
     CGFloat rotation = fabs((180 * (atan2(card.transform.b, card.transform.a))) / M_PI);
-    CGFloat scale = sqrt((card.transform.a * card.transform.a) + (card.transform.c * card.transform.c));
-    NSLog(@"rotation angle = %f, scale = %f", rotation, scale);
+    
+    return (rotation <= self.maxAcceptableRotation || 360 - rotation <= self.maxAcceptableRotation) ? YES : NO;
+}
 
-    if ((rotation <= self.maxAcceptableRotation || 360 - rotation <= self.maxAcceptableRotation) &&
-        (scale <= self.maxAcceptableScale))
-        return YES;
-    else
-        return NO;
+
+- (BOOL) hasCardProperScale:(CardView*)card
+{
+    CGFloat scale = sqrt((card.transform.a * card.transform.a) + (card.transform.c * card.transform.c));
+    
+    return (scale <= 1 + self.maxAcceptableScaleVariation && scale >= 1 - self.maxAcceptableScaleVariation) ? YES : NO;
+}
+
+
+- (void) lockCardPosition:(CardView*)card overSilhouette:(SilhouetteButton*)silhouette
+{
+    card.panGestureRecognizer.enabled = NO;
+    silhouette.userInteractionEnabled = NO;
+    [card removeTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
+    [silhouette removeTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [UIView animateWithDuration:.6 delay:.0 usingSpringWithDamping:.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        
+        card.center = silhouette.center;
+        
+    } completion:nil];
 }
 
 
 #pragma mark - XML parsing
 
-- (void) parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict {
-    
-    NSLog(@"didStartElement: %@", elementName);
-    
+- (void) parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict
+{
     // Load activity image
     if ([elementName isEqual:@"tarea"])
         self.activityImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"imagen_tema_%i", [[attributeDict objectForKey:@"id"] integerValue]]];
@@ -239,6 +342,8 @@
         card.cardID = [idString integerValue];
         NSString *imageName = [NSString stringWithFormat:@"obj_%i", card.cardID];
         card.imageView.image = [UIImage imageNamed:imageName];
+        card.panGestureRecognizer.enabled = YES;
+        card.pinchGestureRecognizer.enabled = NO;
         
         [self.view addSubview:card];
         [self.cardViewsArray addObject:card];
@@ -280,7 +385,7 @@
         
         _maxAcceptableDistance = [[attributeDict objectForKey:@"T"] floatValue];
         _maxAcceptableRotation = [[attributeDict objectForKey:@"R"] floatValue];
-        _maxAcceptableScale = [[attributeDict objectForKey:@"E"] floatValue];
+        _maxAcceptableScaleVariation = [[attributeDict objectForKey:@"E"] floatValue];
         
     }
 }
@@ -294,6 +399,60 @@
 
 - (void) parser:(NSXMLParser *)parser validationErrorOccurred:(NSError *)validationError {
     NSLog(@"XMLParser error: %@", [validationError localizedDescription]);
+}
+
+
+#pragma mark - Save
+
+- (void) saveResults
+{
+    NSMutableString *resultsString = [NSMutableString string];
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"dd/MM/yyyy HH:mm"];
+    
+    [resultsString appendFormat:@"<resultados fecha=\"%@\"> \n", [formatter stringFromDate:[NSDate date]]];
+    [resultsString appendFormat:@"<tarea id=\"%@\" resultado=\"%d\"> \n", self.task.taskID, (self.remainingSilhouettes) ? 0 : 1];
+    
+    // Write all the cards
+    for (CardView *card in self.cardViewsArray) {
+        if (card.interactions.count > 0) {
+            [resultsString appendFormat:@"<elemento id=\"%d\"> \n", card.cardID];
+            
+            // Write all the interactions
+            for (Interaction *interaction in card.interactions){
+                NSLog(@"%lu", interaction.end);
+                [resultsString appendFormat:@"\t <%@ ini=\"%lu\" fin=\"%lu\" resultado=\"%d\"/> \n", interaction.name, interaction.start, interaction.end, interaction.isCorrect];
+            }
+            
+            [resultsString appendString:@"</elemento> \n"];
+        }
+    }
+    
+    [resultsString appendString:@"</resultados> \n\n"];
+    
+    // Get file path
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = paths[0];
+    NSString *filePath = [documentsDirectory stringByAppendingString:[NSString stringWithFormat:@"/%@", self.resultsFileName]];
+    NSLog(@"filePath = %@", filePath);
+    
+    // Read file in case already exists
+    NSError *error;
+    NSString *contentOfFile = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:&error];
+    
+    // Add existing results if there are
+    NSString *stringToWrite;
+    if (contentOfFile)
+        stringToWrite = [contentOfFile stringByAppendingString:resultsString];
+    else
+        stringToWrite = resultsString;
+    
+    // Write results to file
+    BOOL succeed = [stringToWrite writeToFile:filePath atomically:YES encoding:NSUTF8StringEncoding error:&error];
+    
+    if (!succeed)
+        NSLog(@"Error writing the results to file: %@", error);
 }
 
 
@@ -411,8 +570,20 @@
         silhouette.frame = silFrame;
         
         xOrigin += silFrame.size.width + horizontalMargin;
-        
     }
+}
+
+
+- (NSString*) nameForGesture:(UIGestureRecognizer*)gesture
+{
+    if ([gesture isKindOfClass:[UIPinchGestureRecognizer class]])
+        return @"escalar";
+    else if ([gesture isKindOfClass:[UIRotationGestureRecognizer class]])
+        return @"rotar";
+    else if ([gesture isKindOfClass:[UIPanGestureRecognizer class]])
+        return @"arrastrar";
+    
+    return nil;
 }
 
 
@@ -424,7 +595,7 @@
 }
 
 
-- (NSMutableArray *)silhouettes
+- (NSMutableArray *) silhouettes
 {
     if (_silhouettes == nil)
         _silhouettes = [NSMutableArray array];
@@ -433,7 +604,7 @@
 }
 
 
-- (NSMutableArray *)cardViewsArray
+- (NSMutableArray *) cardViewsArray
 {
     if (_cardViewsArray == nil)
         _cardViewsArray = [NSMutableArray array];

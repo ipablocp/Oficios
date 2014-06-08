@@ -6,8 +6,14 @@
 //  Copyright (c) 2014 DSIC. All rights reserved.
 //
 
+
 #import "CardView.h"
 #import "UIImage+Extensions.h"
+#import "Interaction.h"
+
+
+@interface CardView ()
+@end
 
 
 @implementation CardView
@@ -47,19 +53,6 @@
     self.imageView.layer.magnificationFilter = kCAFilterTrilinear;
     self.imageView.layer.minificationFilter = kCAFilterTrilinear;
     self.imageView.layer.shouldRasterize = YES;
-    
-    // Init gestures
-    self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
-    self.panGestureRecognizer.delegate = self;
-    [self addGestureRecognizer:self.panGestureRecognizer];
-    
-    self.rotationGestureRecognizer = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotation:)];
-    self.rotationGestureRecognizer.delegate = self;
-    [self addGestureRecognizer:self.rotationGestureRecognizer];
-    
-    self.pinchGestureRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
-    self.pinchGestureRecognizer.delegate = self;
-    [self addGestureRecognizer:self.pinchGestureRecognizer];
 }
 
 
@@ -71,7 +64,6 @@
     
     self.imageView.image = [originalImage imageWithOverlayColor:color];
     
-    
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.6 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
         self.imageView.image = originalImage;
@@ -79,9 +71,47 @@
     });
 }
 
+
 - (void) moveToOriginalPosition
 {
     self.center = self.originalCenter;
+}
+
+
+- (void) showStarAnimated:(BOOL)animated
+{
+    if (animated) {
+        self.starImageView.transform = CGAffineTransformMakeScale(.0, .0);
+        
+        [UIView animateWithDuration:1.5 delay:.0 usingSpringWithDamping:.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+            self.starImageView.transform = CGAffineTransformMakeScale(1.0, 1.0);
+        } completion:nil];
+    }
+    else
+        self.starImageView.transform = CGAffineTransformMakeScale(1.0, 1.0);
+    
+    self.starImageView.hidden = NO; // In case is was hidden
+    self.starImageView.alpha = 1.0; // In case it was set to transparent
+}
+
+
+- (void) hideStarAnimated:(BOOL)animated
+{
+    if (animated) {
+        self.starImageView.transform = CGAffineTransformMakeScale(1.0, 1.0);
+        [UIView animateWithDuration:.3 animations:^{
+            self.starImageView.transform = CGAffineTransformMakeScale(0.0, 0.0);
+        } completion:^(BOOL finished) {
+            if (finished) {
+                [self.starImageView removeFromSuperview];
+                self.starImageView = nil;
+            }
+        }];
+    }
+    else {
+        [self.starImageView removeFromSuperview];
+        self.starImageView = nil;
+    }
 }
 
 
@@ -89,6 +119,10 @@
 
 - (void) handlePan:(UIPanGestureRecognizer*)recognizer
 {
+    if(recognizer.state == UIGestureRecognizerStateBegan && [self.delegate respondsToSelector:@selector(cardView:willBegingRecognizingGesture:)])
+        [self.delegate cardView:self willBegingRecognizingGesture:recognizer];
+    
+    // Move itself
     CGPoint translation = [recognizer translationInView:self.superview];
     self.center = CGPointMake(self.center.x + translation.x, self.center.y + translation.y);
     
@@ -96,14 +130,41 @@
     [recognizer setTranslation:CGPointZero inView:self.superview];
     
     // Tell the delegate the end of the interaction
-    if (recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled)
+    if (recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled){
+        
+        // Tell the delegate
         if ([self.delegate respondsToSelector:@selector(cardEndedInteracting:)])
             [self.delegate cardEndedInteracting:self];
+    }
+}
+
+
+- (void) handlePinch:(UIPinchGestureRecognizer*)recognizer
+{
+    if(recognizer.state == UIGestureRecognizerStateBegan && [self.delegate respondsToSelector:@selector(cardView:willBegingRecognizingGesture:)])
+        [self.delegate cardView:self willBegingRecognizingGesture:recognizer];
+    
+    float currentScale = sqrt(self.transform.a * self.transform.a + self.transform.c * self.transform.c);
+    if (recognizer.scale >= 1.0 || (currentScale > 0.6 && recognizer.scale < 1.0)) {
+        
+        self.transform = CGAffineTransformScale(self.transform, recognizer.scale, recognizer.scale);
+        
+        // Reset scale
+        recognizer.scale = 1.0;
+        
+        // Tell the delegate the end of the interaction
+        if (recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled)
+            if ([self.delegate respondsToSelector:@selector(cardEndedInteracting:)])
+                [self.delegate cardEndedInteracting:self];
+    }
 }
 
 
 - (void) handleRotation:(UIRotationGestureRecognizer*)recognizer
 {
+    if(recognizer.state == UIGestureRecognizerStateBegan && [self.delegate respondsToSelector:@selector(cardView:willBegingRecognizingGesture:)])
+        [self.delegate cardView:self willBegingRecognizingGesture:recognizer];
+    
     recognizer.view.transform = CGAffineTransformRotate(recognizer.view.transform, recognizer.rotation);
     
     // Reset rotation
@@ -116,22 +177,8 @@
 }
 
 
-- (void) handlePinch:(UIPinchGestureRecognizer*)recognizer
-{
-    self.transform = CGAffineTransformScale(self.transform, recognizer.scale, recognizer.scale);
-    
-    // Reset scale
-    recognizer.scale = 1.0;
-    
-    // Tell the delegate the end of the interaction
-    if (recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled)
-        if ([self.delegate respondsToSelector:@selector(cardEndedInteracting:)])
-            [self.delegate cardEndedInteracting:self];
-}
-
-
 - (BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-    return YES;
+    return NO;
 }
 
 
@@ -160,6 +207,50 @@
 }
 
 
+- (UIPanGestureRecognizer *) panGestureRecognizer
+{
+    if (_panGestureRecognizer == nil) {
+        _panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
+        _panGestureRecognizer.delegate = self;
+        [self addGestureRecognizer:_panGestureRecognizer];
+    }
+    
+    return _panGestureRecognizer;
+}
+
+
+- (UIPinchGestureRecognizer *) pinchGestureRecognizer
+{
+    if (_pinchGestureRecognizer == nil) {
+        _pinchGestureRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
+        _pinchGestureRecognizer.delegate = self;
+        [self addGestureRecognizer:_pinchGestureRecognizer];
+    }
+    
+    return _pinchGestureRecognizer;
+}
+
+
+- (UIRotationGestureRecognizer *) rotationGestureRecognizer
+{
+    if (_rotationGestureRecognizer == nil) {
+        _rotationGestureRecognizer = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotation:)];
+        _rotationGestureRecognizer.delegate = self;
+        [self addGestureRecognizer:_rotationGestureRecognizer];
+    }
+    
+    return _rotationGestureRecognizer;
+}
+
+
+- (NSMutableArray *) interactions
+{
+    if (_interactions == nil)
+        _interactions = [NSMutableArray array];
+    
+    return _interactions;
+}
+
 - (void) setBounds:(CGRect)bounds
 {
     [super setBounds:bounds];
@@ -168,7 +259,7 @@
 }
 
 
-- (void)setFrame:(CGRect)frame
+- (void) setFrame:(CGRect)frame
 {
     [super setFrame:frame];
     

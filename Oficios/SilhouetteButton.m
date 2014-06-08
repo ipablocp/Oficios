@@ -7,14 +7,31 @@
 //
 
 #import "SilhouetteButton.h"
+#import "UIImage+Extensions.h"
+
 
 @implementation SilhouetteButton
+
 
 - (id)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
     }
     return self;
+}
+
+
+- (void) flashCardWithColor:(UIColor*)color
+{
+    UIImage *originalImage = self.imageView.image;
+    
+    self.imageView.image = [originalImage imageWithOverlayColor:color];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.6 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+        self.imageView.image = originalImage;
+        
+    });
 }
 
 

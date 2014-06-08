@@ -6,12 +6,18 @@
 //  Copyright (c) 2014 DSIC. All rights reserved.
 //
 
+
+// VCs
 #import "UsersTableViewController.h"
-#import "TareaTableViewController.h"
+#import "ChapterTableViewController.h"
+// Model
+#import "User.h"
+#import "Chapter.h"
+#import "Task.h"
 
 
 @interface UsersTableViewController ()
-@property (strong, nonatomic) NSArray *users;
+@property (strong, nonatomic) NSMutableArray *users;
 @end
 
 
@@ -21,6 +27,16 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    // Read XML users
+    NSString *nameOfFile = @"session.config";
+    NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"sesion" withExtension:@"config"];
+    NSXMLParser *parser = [[NSXMLParser alloc] initWithContentsOfURL:fileURL];
+    [parser setDelegate:self];
+    BOOL parsedSuccessfully = [parser parse];
+    
+    if (!parsedSuccessfully)
+        NSLog(@"Error parsing the file %@", nameOfFile);
 }
 
 
@@ -42,7 +58,7 @@
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UserCell" forIndexPath:indexPath];
     
-    cell.textLabel.text = self.users[indexPath.row];
+    cell.textLabel.text = [self.users[indexPath.row] name];
     
     return cell;
 }
@@ -53,22 +69,9 @@
 {
     if (![[tableView indexPathForSelectedRow] isEqual:indexPath]) {
         UINavigationController *tareaNavigationController = [self.storyboard instantiateViewControllerWithIdentifier:@"TareaNavigationController"];
-        TareaTableViewController *tareaViewController = (TareaTableViewController*)[tareaNavigationController topViewController];
-        
-        NSMutableArray *tareas = [NSMutableArray array];
-        NSMutableArray *temas = [NSMutableArray array];
-        for (int i = 0; i < indexPath.row + 1; i++) {
-            [temas addObject:[NSString stringWithFormat:@"temas %i", i]];
-            
-            NSMutableArray *grupoTareas = [NSMutableArray array];
-            for (int j = 0; j < indexPath.row + 1; j++)
-                [grupoTareas addObject:[NSString stringWithFormat:@"tareas %i", j]];
-            
-            [tareas addObject:grupoTareas];
-        }
-        
-        tareaViewController.tareas = tareas;
-        tareaViewController.temas = temas;
+        ChapterTableViewController *tareaViewController = (ChapterTableViewController*)[tareaNavigationController topViewController];
+
+        tareaViewController.user = self.users[indexPath.row];
         
         // Load user activities
         UIViewController *navigationViewController = self.splitViewController.viewControllers[0];
@@ -80,34 +83,57 @@
 }
 
 
+#pragma mark - XML parsing
 
-#pragma mark - Navigation
-/*
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+- (void) parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict
 {
-    UINavigationController *tareaNavigationController = [segue destinationViewController];
-    TareaTableViewController *activityViewController = (TareaTableViewController*)[tareaNavigationController topViewController];
-    
-    NSMutableArray *tareas = [NSMutableArray array];
-    NSMutableArray *temas = [NSMutableArray array];
-    for (int i = 0; i < indexPath.row + 1; i++) {
-        [tareas addObject:[NSString stringWithFormat:@"Tarea %i", i]];
-        [temas addObject:[NSString stringWithFormat:@"Temas %i", i]];
+    // Parse users
+    if ([elementName isEqual:@"usuario"]){
+        User *user = [[User alloc] init];
+        user.userID = [attributeDict objectForKey:@"id"];
+        user.name = [attributeDict objectForKey:@"name"];
+        [self.users addObject:user];
     }
     
-    activityViewController.tareas = tareas;
-    activityViewController.temas = temas;
+    // Parse chapters
+    else if ([elementName isEqual:@"tema"]) {
+        User *user = [self.users lastObject];
+        Chapter *chapter = [[Chapter alloc] init];
+        chapter.chapterID = [attributeDict objectForKey:@"id"];
+        chapter.chapterName = [attributeDict objectForKey:@"name"];
+        [user.chapters addObject:chapter];
+    }
+    
+    // Parse tasks
+    else if ([elementName isEqual:@"tarea"]){
+        User *user = [self.users lastObject];
+        Chapter *chapter = [user.chapters lastObject];
+        Task *task = [[Task alloc] init];
+        task.taskID = [attributeDict objectForKey:@"id"];
+        task.taskName = [attributeDict objectForKey:@"name"];
+        [chapter.tasks addObject:task];
+    }
 }
-*/
 
 
-- (NSArray*) users
+// Error handling
+- (void) parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)parseError {
+    NSLog(@"XMLParser error: %@", [parseError localizedDescription]);
+}
+
+
+- (void) parser:(NSXMLParser *)parser validationErrorOccurred:(NSError *)validationError {
+    NSLog(@"XMLParser error: %@", [validationError localizedDescription]);
+}
+
+
+- (NSMutableArray*) users
 {
-    if (_users == nil) {
-        _users = @[@"Profesor 1", @"Profesor 2", @"Profesor 3", @"Profesor 4"];
-    }
+    if (_users == nil)
+        _users = [NSMutableArray array];
     
     return _users;
 }
+
 
 @end

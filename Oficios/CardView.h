@@ -17,6 +17,7 @@
 // Data
 @property (nonatomic) NSInteger cardID;
 @property (nonatomic) CGPoint originalCenter;
+@property (strong, nonatomic) NSMutableArray *interactions;
 
 // UI
 @property (strong, nonatomic) UIImageView *imageView;
@@ -27,6 +28,7 @@
 @property (strong, nonatomic) UIRotationGestureRecognizer *rotationGestureRecognizer;
 @property (strong, nonatomic) UIPinchGestureRecognizer *pinchGestureRecognizer;
 
+
 // Delegate
 @property (weak, nonatomic) id<CardViewDelegate> delegate;
 
@@ -34,11 +36,8 @@
 // Actions
 - (void) flashCardWithColor:(UIColor*)color;
 - (void) moveToOriginalPosition;
-
-// Gestures handlers
-- (void)handlePan:(UIPanGestureRecognizer*)recognizer;
-- (void)handleRotation:(UIRotationGestureRecognizer*)recognizer;
-- (void)handlePinch:(UIPinchGestureRecognizer*)recognizer;
+- (void) showStarAnimated:(BOOL)animated;
+- (void) hideStarAnimated:(BOOL)animated;
 
 @end
 
@@ -46,5 +45,6 @@
 
 @protocol CardViewDelegate <NSObject>
 @optional
+- (void) cardView:(CardView*)card willBegingRecognizingGesture:(UIGestureRecognizer*)gestureRecognizer;
 - (void) cardEndedInteracting:(CardView*)card;
 @end
