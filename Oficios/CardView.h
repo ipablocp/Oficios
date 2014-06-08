@@ -36,7 +36,7 @@
 // Actions
 - (void) flashCardWithColor:(UIColor*)color;
 - (void) moveToOriginalPosition;
-- (void) showStarAnimated:(BOOL)animated;
+- (void) showStarAnimated:(BOOL)animated completion:(void (^)(BOOL finished))completion;
 - (void) hideStarAnimated:(BOOL)animated;
 
 @end

@@ -155,7 +155,12 @@
                     [self playCorrectSound];
                     
                     // Fix star
-                    [card showStarAnimated:YES];
+                    [card showStarAnimated:YES completion:^(BOOL finished) {
+                        if (finished && self.remainingSilhouettes == 0) {
+                            [self saveResults];
+                            [self.delegate activityHasFinishedSuccessfully:YES];
+                        }
+                    }];
                 }
                 
             }
@@ -241,7 +246,13 @@
                 [self playCorrectSound];
                 
                 // Fix star
-                [card showStarAnimated:YES];
+                [card showStarAnimated:YES completion:^(BOOL finished) {
+                    if (finished && self.remainingSilhouettes == 0) {
+                            [self saveResults];
+                            [self.delegate activityHasFinishedSuccessfully:YES];
+                    }
+                }];
+                
             }
             else
                 interaction.isCorrect = NO;
@@ -278,37 +289,6 @@
         else
             startTime = clock() - self.creationTime;
     }
-}
-
-
-- (BOOL) hasCardProperRotation:(CardView*)card
-{
-    CGFloat rotation = fabs((180 * (atan2(card.transform.b, card.transform.a))) / M_PI);
-    
-    return (rotation <= self.maxAcceptableRotation || 360 - rotation <= self.maxAcceptableRotation) ? YES : NO;
-}
-
-
-- (BOOL) hasCardProperScale:(CardView*)card
-{
-    CGFloat scale = sqrt((card.transform.a * card.transform.a) + (card.transform.c * card.transform.c));
-    
-    return (scale <= 1 + self.maxAcceptableScaleVariation && scale >= 1 - self.maxAcceptableScaleVariation) ? YES : NO;
-}
-
-
-- (void) lockCardPosition:(CardView*)card overSilhouette:(SilhouetteButton*)silhouette
-{
-    card.panGestureRecognizer.enabled = NO;
-    silhouette.userInteractionEnabled = NO;
-    [card removeTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
-    [silhouette removeTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
-    
-    [UIView animateWithDuration:.6 delay:.0 usingSpringWithDamping:.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-        
-        card.center = silhouette.center;
-        
-    } completion:nil];
 }
 
 
@@ -480,6 +460,37 @@
 
 
 #pragma mark - Utility methods
+
+- (BOOL) hasCardProperRotation:(CardView*)card
+{
+    CGFloat rotation = fabs((180 * (atan2(card.transform.b, card.transform.a))) / M_PI);
+    
+    return (rotation <= self.maxAcceptableRotation || 360 - rotation <= self.maxAcceptableRotation) ? YES : NO;
+}
+
+
+- (BOOL) hasCardProperScale:(CardView*)card
+{
+    CGFloat scale = sqrt((card.transform.a * card.transform.a) + (card.transform.c * card.transform.c));
+    
+    return (scale <= 1 + self.maxAcceptableScaleVariation && scale >= 1 - self.maxAcceptableScaleVariation) ? YES : NO;
+}
+
+
+- (void) lockCardPosition:(CardView*)card overSilhouette:(SilhouetteButton*)silhouette
+{
+    card.panGestureRecognizer.enabled = NO;
+    silhouette.userInteractionEnabled = NO;
+    [card removeTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
+    [silhouette removeTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [UIView animateWithDuration:.6 delay:.0 usingSpringWithDamping:.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        
+        card.center = silhouette.center;
+        
+    } completion:nil];
+}
+
 
 - (CGFloat) distanceBetweenPoint:(CGPoint)p1 andPoint:(CGPoint)p2
 {

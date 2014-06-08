@@ -78,17 +78,20 @@
 }
 
 
-- (void) showStarAnimated:(BOOL)animated
+- (void) showStarAnimated:(BOOL)animated completion:(void (^)(BOOL finished))completion
 {
     if (animated) {
         self.starImageView.transform = CGAffineTransformMakeScale(.0, .0);
         
-        [UIView animateWithDuration:1.5 delay:.0 usingSpringWithDamping:.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+        [UIView animateWithDuration:2.0 delay:.0 usingSpringWithDamping:0.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
             self.starImageView.transform = CGAffineTransformMakeScale(1.0, 1.0);
-        } completion:nil];
+        } completion:completion];
     }
-    else
+    else {
         self.starImageView.transform = CGAffineTransformMakeScale(1.0, 1.0);
+        if (completion)
+            completion(YES);
+    }
     
     self.starImageView.hidden = NO; // In case is was hidden
     self.starImageView.alpha = 1.0; // In case it was set to transparent
