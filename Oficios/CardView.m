@@ -10,9 +10,19 @@
 #import "CardView.h"
 #import "UIImage+Extensions.h"
 #import "Interaction.h"
+#import "CoreGraphicsExtention.h"
 
 
 @interface CardView ()
+{
+    CGFloat initialDistance;
+    CGFloat deltaAngle;
+    
+    CGPoint lastTouchPosition;
+    
+    // Rotation reconnizer
+    BOOL isRecognisingRotation;
+}
 @end
 
 
@@ -53,6 +63,8 @@
     self.imageView.layer.magnificationFilter = kCAFilterTrilinear;
     self.imageView.layer.minificationFilter = kCAFilterTrilinear;
     self.imageView.layer.shouldRasterize = YES;
+    _oneFingerRotationEnable = NO;
+    lastTouchPosition = CGPointMake(0.0, 1.0);
 }
 
 
@@ -152,6 +164,9 @@
         
         self.transform = CGAffineTransformScale(self.transform, recognizer.scale, recognizer.scale);
         
+        //CGRect scaleRect = CGRectScale(self.bounds, recognizer.scale, recognizer.scale);
+        //[self setBounds:scaleRect];
+        
         // Reset scale
         recognizer.scale = 1.0;
         
@@ -163,12 +178,15 @@
 }
 
 
+/*
 - (void) handleRotation:(UIRotationGestureRecognizer*)recognizer
 {
     if(recognizer.state == UIGestureRecognizerStateBegan && [self.delegate respondsToSelector:@selector(cardView:willBegingRecognizingGesture:)])
         [self.delegate cardView:self willBegingRecognizingGesture:recognizer];
     
-    recognizer.view.transform = CGAffineTransformRotate(recognizer.view.transform, recognizer.rotation);
+    //recognizer.view.transform = CGAffineTransformRotate(recognizer.view.transform, recognizer.rotation);
+    
+    //NSLog(@"rotation = %f", recognizer.rotation);
     
     // Reset rotation
     recognizer.rotation = 0.0;
@@ -178,10 +196,58 @@
         if ([self.delegate respondsToSelector:@selector(cardEndedInteracting:)])
             [self.delegate cardEndedInteracting:self];
 }
+*/
 
 
 - (BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
     return NO;
+}
+
+
+#pragma mark - One finger rotation
+
+- (void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [super touchesBegan:touches withEvent:event];
+    
+    if (self.oneFingerRotationEnable) {
+        CGPoint touchLocation = [[touches anyObject] locationInView:self.superview];
+        
+        deltaAngle = atan2(touchLocation.y - self.center.y, touchLocation.x - self.center.x) - CGAffineTransformGetAngle(self.transform);
+    }
+}
+
+
+- (void) touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    //[super touchesMoved:touches withEvent:event];
+    
+    if (self.oneFingerRotationEnable) {
+        isRecognisingRotation = YES;
+        
+        CGPoint touchLocation = [[touches anyObject] locationInView:self.superview];
+    
+        float ang = atan2(touchLocation.y - self.center.y, touchLocation.x - self.center.x);
+    
+        float angleDiff = deltaAngle - ang;
+        
+        self.transform = CGAffineTransformRotate(self.transform, -CGAffineTransformGetAngle(self.transform));
+    
+        self.transform = CGAffineTransformRotate(self.transform, -angleDiff);
+    }
+}
+
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [super touchesEnded:touches withEvent:event];
+    
+    if (isRecognisingRotation) {
+        if ([self.delegate respondsToSelector:@selector(cardEndedInteracting:)])
+            [self.delegate cardEndedInteracting:self];
+        
+        isRecognisingRotation = NO;
+    }
 }
 
 
@@ -234,6 +300,7 @@
 }
 
 
+/*
 - (UIRotationGestureRecognizer *) rotationGestureRecognizer
 {
     if (_rotationGestureRecognizer == nil) {
@@ -244,6 +311,7 @@
     
     return _rotationGestureRecognizer;
 }
+*/
 
 
 - (NSMutableArray *) interactions
@@ -268,5 +336,6 @@
     
     self.imageView.frame = self.bounds;
 }
+
 
 @end

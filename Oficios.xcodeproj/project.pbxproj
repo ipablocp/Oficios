@@ -96,6 +96,7 @@
 		6EC7A6281943655000365A01 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		6EC7A62A194365BD00365A01 /* Chapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chapter.h; sourceTree = "<group>"; };
 		6EC7A62B194365BD00365A01 /* Chapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Chapter.m; sourceTree = "<group>"; };
+		6EE3D9B6194C736000E06720 /* CoreGraphicsExtention.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreGraphicsExtention.h; sourceTree = "<group>"; };
 		6EE8DC2B18F87B5C00F7E6E8 /* Oficios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Oficios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EE8DC2E18F87B5C00F7E6E8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6EE8DC3018F87B5C00F7E6E8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -253,6 +254,7 @@
 				6EE8DC3018F87B5C00F7E6E8 /* CoreGraphics.framework */,
 				6EE8DC3218F87B5C00F7E6E8 /* UIKit.framework */,
 				6EE8DC4D18F87B5C00F7E6E8 /* XCTest.framework */,
+				6EE3D9B6194C736000E06720 /* CoreGraphicsExtention.h */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

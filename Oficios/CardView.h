@@ -18,6 +18,7 @@
 @property (nonatomic) NSInteger cardID;
 @property (nonatomic) CGPoint originalCenter;
 @property (strong, nonatomic) NSMutableArray *interactions;
+@property (nonatomic) BOOL oneFingerRotationEnable;
 
 // UI
 @property (strong, nonatomic) UIImageView *imageView;
@@ -25,7 +26,7 @@
 
 // Gesture recognizers
 @property (strong, nonatomic) UIPanGestureRecognizer *panGestureRecognizer;
-@property (strong, nonatomic) UIRotationGestureRecognizer *rotationGestureRecognizer;
+//@property (strong, nonatomic) UIRotationGestureRecognizer *rotationGestureRecognizer;
 @property (strong, nonatomic) UIPinchGestureRecognizer *pinchGestureRecognizer;
 
 

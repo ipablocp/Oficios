@@ -10,6 +10,8 @@
 #import "ActivityViewController.h"
 #import "CardInteractions.h"
 #import "Interaction.h"
+#import "CoreGraphicsExtention.h"
+
 
 #define MIN_VERTICAL_MARGIN 50
 #define MIN_HORIZONTAL_MARGIN 10
@@ -120,14 +122,16 @@
                 if( !CGPointEqualToPoint(card.center, silhouette.center) )
                     [self lockCardPosition:card overSilhouette:silhouette];
                 
-                if ([self hasCardProperRotation:card])
-                    card.rotationGestureRecognizer.enabled = NO;
-                else
-                    card.rotationGestureRecognizer.enabled = YES;
+                if ([self hasCardProperRotation:card]) {
+                    //card.rotationGestureRecognizer.enabled = NO;
+                    [self fixRotatioForCard:card];
+                }
+                else {
+                    //card.rotationGestureRecognizer.enabled = YES;
+                    card.oneFingerRotationEnable = YES;
+                }
                 
-                if ([self hasCardProperScale:card])
-                    card.pinchGestureRecognizer.enabled = NO;
-                else
+                if (![self hasCardProperScale:card])
                     card.pinchGestureRecognizer.enabled = YES;
                 
                 // Card Completed
@@ -136,6 +140,8 @@
                     [UIView animateWithDuration:.3 animations:^{
                         card.transform = CGAffineTransformIdentity;
                     }];
+                    
+                    card.pinchGestureRecognizer.enabled = NO;
                     
                     silhouette.hidden = YES;
                     
@@ -211,14 +217,16 @@
             // Lock card movement
             [self lockCardPosition:card overSilhouette:silhouette];
             
-            if ([self hasCardProperRotation:card])
-                card.rotationGestureRecognizer.enabled = NO;
-            else
-                card.rotationGestureRecognizer.enabled = YES;
+            if ([self hasCardProperRotation:card]) {
+                //card.rotationGestureRecognizer.enabled = NO;
+                [self fixRotatioForCard:card];
+            }
+            else {
+                //card.rotationGestureRecognizer.enabled = YES;
+                card.oneFingerRotationEnable = YES;
+            }
             
-            if ([self hasCardProperScale:card])
-                card.pinchGestureRecognizer.enabled = NO;
-            else
+            if (![self hasCardProperScale:card])
                 card.pinchGestureRecognizer.enabled = YES;
             
             // Card Completed
@@ -227,6 +235,8 @@
                 [UIView animateWithDuration:.3 animations:^{
                     card.transform = CGAffineTransformIdentity;
                 }];
+                
+                card.pinchGestureRecognizer.enabled = NO;
                 
                 silhouette.hidden = YES;
                 
@@ -480,6 +490,15 @@
 
 
 #pragma mark - Utility methods
+
+- (void) fixRotatioForCard:(CardView*)card
+{
+    card.oneFingerRotationEnable = NO;
+    [UIView animateWithDuration:.6 delay:.0 usingSpringWithDamping:.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        card.transform = CGAffineTransformRotate(card.transform, -CGAffineTransformGetAngle(card.transform));
+    } completion:nil];
+}
+
 
 - (void) reloadUIForCurrentTask
 {
