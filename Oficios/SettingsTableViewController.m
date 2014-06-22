@@ -45,12 +45,18 @@
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
-    if (indexPath.row == 0) {
+    if (indexPath.row == 0)
         cell.textLabel.text = @"Completar siluetas en orden";
-        [cell.switchControl setOn:[defaults boolForKey:cell.textLabel.text] animated:NO];
-    }
+    
+    [cell.switchControl setOn:[defaults boolForKey:cell.textLabel.text] animated:NO];
     
     return cell;
+}
+
+
+- (BOOL) tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return NO;
 }
 
 

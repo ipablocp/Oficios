@@ -10,8 +10,17 @@
 #import "ActivityViewController.h"
 #import "User.h"
 
+@protocol ChapterTableViewControllerDelegate;
+
+
 @interface ChapterTableViewController : UITableViewController <ActivityViewControllerDelegate>
 
 @property (strong, nonatomic) User *user;
+@property (weak, nonatomic) id<ChapterTableViewControllerDelegate> delegate;
 
+@end
+
+
+@protocol ChapterTableViewControllerDelegate <NSObject>
+- (void) taskAdded;
 @end

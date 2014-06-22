@@ -23,6 +23,7 @@
 // UI
 @property (strong, nonatomic) UIImageView *imageView;
 @property (strong, nonatomic) UIImageView *starImageView;
+@property (strong, nonatomic) NSString *imageName;
 
 // Gesture recognizers
 @property (strong, nonatomic) UIPanGestureRecognizer *panGestureRecognizer;

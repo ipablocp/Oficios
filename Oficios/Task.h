@@ -9,6 +9,5 @@
 #import <Foundation/Foundation.h>
 
 @interface Task : NSObject
-@property (strong, nonatomic) NSString *taskName;
-@property (nonatomic) NSInteger taskID;
+@property (strong, nonatomic) NSString *taskID;
 @end

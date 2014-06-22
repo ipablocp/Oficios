@@ -18,11 +18,17 @@
 
 #define DEGREES_TO_RADIANS(angle) ((angle) / 180.0 * M_PI)
 
+NSString *MaxDistanceTitle = @"Distancia máxima";
+NSString *MaxRotationTitle = @"Rotación máxima";
+NSString *MaxScaleTitle = @"Escalado máximo";
+NSString *TaskNameTitle = @"Nombre de la tarea";
 
 @interface ActivityViewController ()
 @property (nonatomic, weak) UIControl *selectedObject;
 @property (nonatomic) clock_t creationTime;
 @property (nonatomic) BOOL isCompletionInOrder;
+// Edit Mode
+@property (nonatomic) UIControl *controlWaitingForImage;
 @end
 
 
@@ -31,27 +37,48 @@
 
 #pragma mark - Lifecycle
 
+-(id)initWithCoder:(NSCoder *)aDecoder
+{
+    if (self = [super initWithCoder:aDecoder]) {
+        _maxAcceptableDistance = 30;
+        _maxAcceptableRotation = 25;
+        _maxAcceptableScaleVariation = .2;
+    }
+    
+    return self;
+}
+
 - (void) viewDidLoad
 {
     [super viewDidLoad];
     
     self.isCompletionInOrder = [[NSUserDefaults standardUserDefaults] boolForKey:@"Completar siluetas en orden"];
     
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Nombre"
-                                                        message:@"Introduzca el nombre del niño"
-                                                       delegate:self
-                                              cancelButtonTitle:@"Cancelar"
-                                              otherButtonTitles:@"Empezar", nil];
-    alertView.alertViewStyle = UIAlertViewStylePlainTextInput;
-    [alertView show];
-}
-
-
-- (IBAction) closeActivity
-{
-    [self saveResults];
-    
-    [self.delegate activityHasFinishedSuccessfully:NO];
+    if (self.editorMode) {
+        self.closeButton.hidden = YES;
+        self.activityImageButton.userInteractionEnabled = YES;
+        self.deleteSilhouetteButton.hidden = YES;
+        self.deleteCardButton.hidden = YES;
+        
+        self.addCardButton.exclusiveTouch = YES;
+        self.deleteCardButton.exclusiveTouch = YES;
+        self.addSilhouetteButton.exclusiveTouch = YES;
+        self.deleteCardButton.exclusiveTouch = YES;
+        
+        _task = [[Task alloc] init];
+    }
+    else {
+        self.saveButton.hidden = YES;
+        self.cancelButton.hidden = YES;
+        self.addCardButton.hidden = YES;
+        self.addSilhouetteButton.hidden = YES;
+        self.deleteCardButton.hidden = YES;
+        self.deleteSilhouetteButton.hidden = YES;
+        self.activityImageButton.userInteractionEnabled = NO;
+        self.maxDistanceButton.hidden = YES;
+        self.maxRotationButton.hidden = YES;
+        self.maxScaleButton.hidden = YES;
+    }
 }
 
 
@@ -59,11 +86,22 @@
 {
     [super viewWillAppear:animated];
     
-    [self reloadUIForCurrentTask];
+    if (!self.editorMode) {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Nombre"
+                                                            message:@"Introduzca el nombre del niño"
+                                                           delegate:self
+                                                  cancelButtonTitle:@"Cancelar"
+                                                  otherButtonTitles:@"Empezar", nil];
+        alertView.alertViewStyle = UIAlertViewStylePlainTextInput;
+        [alertView show];
+        
+        [self reloadUIForCurrentTask];
+    }
     
     // Set image quality
-    self.activityImageView.layer.minificationFilter = kCAFilterTrilinear;
-    self.activityImageView.layer.magnificationFilter = kCAFilterTrilinear;
+    self.activityImageButton.imageView.layer.minificationFilter = kCAFilterTrilinear;
+    self.activityImageButton.imageView.layer.magnificationFilter = kCAFilterTrilinear;
+    self.activityImageButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
 }
 
 
@@ -72,12 +110,6 @@
     [super viewDidAppear:animated];
     
     self.creationTime = clock();
-}
-
-
-- (void) viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
 }
 
 
@@ -300,9 +332,13 @@
 
 - (BOOL) readTaskFile
 {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *nameOfFile = [NSString stringWithFormat:@"tarea %@.config", self.task.taskID];
+    NSString *fileString = [@"file://" stringByAppendingString:[documentsDirectory stringByAppendingPathComponent:nameOfFile]];
+    NSURL *fileURL = [NSURL URLWithString:[fileString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    
     // Parse configuration file
-    NSString *nameOfFile = [NSString stringWithFormat:@"tarea_%d", self.task.taskID];
-    NSURL *fileURL = [[NSBundle mainBundle] URLForResource:nameOfFile withExtension:@"config"];
     NSXMLParser *parser = [[NSXMLParser alloc] initWithContentsOfURL:fileURL];
     [parser setDelegate:self];
     BOOL success = [parser parse];
@@ -316,31 +352,38 @@
 
 - (void) parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict
 {
+    // Get task image
+    if ([elementName isEqualToString:@"tarea"])
+        self.activityImageName = [attributeDict objectForKey:@"imagen"];
+    
     // Process Silhouettes
-    if ([elementName isEqual:@"serie"]) {
+    if ([elementName isEqualToString:@"serie"]) {
         NSString *itemsString = [attributeDict objectForKey:@"items"];
         NSArray *components = [itemsString componentsSeparatedByString:@" "];
         
         for (NSString *silIDString in components) {
             
-            SilhouetteButton *silhouette = [SilhouetteButton buttonWithType:UIButtonTypeCustom];
-            silhouette.silhouetteID = silIDString.intValue;
-            silhouette.imageView.layer.minificationFilter = kCAFilterTrilinear;
-            silhouette.imageView.layer.magnificationFilter = kCAFilterTrilinear;
-            UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"sil_%i", silhouette.silhouetteID]];
-            [silhouette setImage:image forState:UIControlStateNormal];
-            [silhouette sizeToFit];
+            if ([silIDString length] > 0) { // Prevent a posible white spaces to count
+                SilhouetteButton *silhouette = [SilhouetteButton buttonWithType:UIButtonTypeCustom];
+                silhouette.silhouetteID = silIDString.intValue;
+                silhouette.imageView.layer.minificationFilter = kCAFilterTrilinear;
+                silhouette.imageView.layer.magnificationFilter = kCAFilterTrilinear;
+                UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"sil_%i", silhouette.silhouetteID]];
+                [silhouette setImage:image forState:UIControlStateNormal];
+                [silhouette sizeToFit];
+                
+                [self.view addSubview:silhouette];
+                [self.silhouettes addObject:silhouette];
+                
+                [silhouette addTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
+            }
             
-            [self.view addSubview:silhouette];
-            [self.silhouettes addObject:silhouette];
-            
-            [silhouette addTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
             
         }
     }
     
     // Process Cards
-    else if ([elementName isEqual:@"objeto"]) {
+    else if ([elementName isEqualToString:@"objeto"]) {
         
         NSString *idString = [attributeDict objectForKey:@"id"];
         CardView *card = [[CardView alloc] initWithFrame:CGRectMake(.0, .0, 100, 100)];
@@ -369,7 +412,7 @@
     }
     
     // Process Correct Sound
-    else if ([elementName isEqual:@"audio_recompensa"]) {
+    else if ([elementName isEqualToString:@"audio_recompensa"]) {
         
         NSString *audioName = [attributeDict objectForKey:@"file"];
         self.correctSoundPath = [[NSBundle mainBundle] URLForResource:audioName withExtension:@"wav"];
@@ -378,7 +421,7 @@
     }
     
     // Process Incorrect Sound
-    else if ([elementName isEqual:@"audio_incorrecto"]){
+    else if ([elementName isEqualToString:@"audio_incorrecto"]){
         
         self.incorrectSoundPath = [[NSBundle mainBundle] URLForResource:@"Incorrect" withExtension:@"wav"];
         AudioServicesCreateSystemSoundID((__bridge CFURLRef)self.incorrectSoundPath, &_incorrectSoundID);
@@ -386,7 +429,7 @@
     }
     
     // Process Max Error Limits
-    else if ([elementName isEqual:@"margenes_error_aceptados"]) {
+    else if ([elementName isEqualToString:@"margenes_error_aceptados"]) {
         
         _maxAcceptableDistance = [[attributeDict objectForKey:@"T"] floatValue];
         _maxAcceptableRotation = [[attributeDict objectForKey:@"R"] floatValue];
@@ -417,7 +460,7 @@
     [formatter setDateFormat:@"dd/MM/yyyy HH:mm"];
     
     [resultsString appendFormat:@"<resultados fecha=\"%@\"> \n", [formatter stringFromDate:[NSDate date]]];
-    [resultsString appendFormat:@"<tarea id=\"%d\" resultado=\"%d\"> \n", self.task.taskID, (self.remainingSilhouettes) ? 0 : 1];
+    [resultsString appendFormat:@"<tarea id=\"%@\" resultado=\"%d\"> \n", self.task.taskID, (self.remainingSilhouettes) ? 0 : 1];
     
     // Write all the cards
     for (CardView *card in self.cardViewsArray) {
@@ -461,6 +504,53 @@
 }
 
 
+- (void) saveActivity
+{
+    /** Create task file **/
+    NSMutableString *activityString = [NSMutableString string];
+    
+    // Add the task
+    [activityString appendFormat:@"<tarea id=\"%@\" imagen=\"%@\"> \n", self.task.taskID, self.activityImageName];
+    
+    // Add the silhouettes
+    [activityString appendString:@"\t <serie items=\""];
+    for (SilhouetteButton *silhouette in self.silhouettes) {
+        NSString *silID = [[silhouette.imageName componentsSeparatedByString:@"_"] lastObject];
+        [activityString appendFormat:@"%@ ", silID];
+    }
+    [activityString appendString:@"\" /> \n"];
+    
+    // Add cards
+    for (CardView *card in self.cardViewsArray) {
+        NSString *cardID = [[card.imageName componentsSeparatedByString:@"_"] lastObject];
+        [activityString appendFormat:@"\t <objeto id=\"%@\" R=\"%f\" E=\"%f\" /> \n", cardID, CGAffineTransformGetAngle(card.transform), CGAffineTransformGetScale(card.transform).width];
+    }
+    
+    // Add audio
+    [activityString appendString:@"\t <audio_recompensa file=\"Correct\"/> \n"];
+    [activityString appendString:@"\t <audio_incorreto file=\"Incorrect\"/> \n"];
+    
+    // Add max acceptables
+    [activityString appendFormat:@"\t <margenes_error_aceptados T=\"%f\" R=\"%f\" E=\"%f\"/> \n", self.maxAcceptableDistance, self.maxAcceptableRotation, self.maxAcceptableScaleVariation];
+    
+    // End tag
+    [activityString appendString:@"</tarea> \n"];
+    
+    // Get file path
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = paths[0];
+    NSString *filePath = [documentsDirectory stringByAppendingString:[NSString stringWithFormat:@"/tarea %@.config", self.task.taskID]];
+    NSLog(@"filePath = %@", filePath);
+    
+    // Write results to file
+    NSError *error;
+    BOOL succeed = [activityString writeToFile:filePath atomically:YES encoding:NSUTF8StringEncoding error:&error];
+    
+    if (!succeed)
+        NSLog(@"Error writing the results to file: %@", error);
+}
+
+
 #pragma mark - Sounds
 
 - (void) playCorrectSound
@@ -475,17 +565,274 @@
 }
 
 
+#pragma mark - Edition methods
+
+- (IBAction) addNewCard:(UIButton*)sender
+{
+    UIImage *placeHolder = [UIImage imageNamed:@"SquarePlaceholder"];
+    CardView *card = [[CardView alloc] initWithFrame:CGRectMake(.0, .0, 100, 100)];
+    [card addTarget:self action:@selector(showImagePicker:) forControlEvents:UIControlEventTouchUpInside];
+    
+    card.imageView.image = placeHolder;
+    card.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    
+    card.panGestureRecognizer.enabled = NO;
+    card.oneFingerRotationEnable = YES;
+    card.pinchGestureRecognizer.enabled = YES;
+    
+    [self.cardViewsArray addObject:card];
+    [self.view insertSubview:card belowSubview:self.addCardButton];
+    
+    [self showImagePicker:card];
+    
+    [self arrageCards];
+    
+    self.deleteCardButton.hidden = NO;
+    
+    if (self.cardViewsArray.count >= 6) {
+        self.addCardButton.hidden = YES;
+    }
+}
+
+
+- (IBAction) deleteCardButtonPressed:(UIButton*)sender
+{
+    if (self.cardViewsArray.count > 0) {
+        CardView *card = [self.cardViewsArray lastObject];
+        
+        [card removeFromSuperview];
+        [self.cardViewsArray removeLastObject];
+        
+        [self arrageCards];
+        
+        self.addCardButton.hidden = NO;
+        
+        if (self.cardViewsArray.count == 0)
+            self.deleteCardButton.hidden = YES;
+    }
+}
+
+
+- (IBAction) addNewSilhouette:(UIButton*)sender
+{
+    UIImage *placeHolder = [UIImage imageNamed:@"SquarePlaceholder"];
+    SilhouetteButton *newSilhouette = [SilhouetteButton buttonWithType:UIButtonTypeCustom];
+    [newSilhouette addTarget:self action:@selector(showImagePicker:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [newSilhouette setImage:placeHolder forState:UIControlStateNormal];
+    [newSilhouette sizeToFit];
+    
+    [self.silhouettes addObject:newSilhouette];
+    [self.view insertSubview:newSilhouette belowSubview:self.addSilhouetteButton];
+    
+    [self showImagePicker:newSilhouette];
+    
+    [self arrangeSilhouettes];
+    [self arrageCards];
+    
+    self.deleteSilhouetteButton.hidden = NO;
+    
+    if (self.silhouettes.count >= 6)
+        self.addSilhouetteButton.hidden = YES;
+}
+
+
+- (IBAction) deleteSilhouetteButtonPressed:(UIButton*)sender
+{
+    if (self.silhouettes.count > 0) {
+        SilhouetteButton *silhouette = [self.silhouettes lastObject];
+        
+        [silhouette removeFromSuperview];
+        [self.silhouettes removeLastObject];
+        
+        [self arrangeSilhouettes];
+        [self arrageCards];
+        
+        self.addSilhouetteButton.hidden = NO;
+        
+        if (self.silhouettes.count == 0) {
+            self.deleteSilhouetteButton.hidden = YES;
+        }
+    }
+}
+
+
+#pragma mark - Image picker
+
+- (IBAction) showImagePicker:(id)sender
+{
+    UINavigationController *imagePickerNavigationController = [self.storyboard instantiateViewControllerWithIdentifier:@"ImagePickerNavigationController"];
+    
+    ImagePickerController *imagePicker = (ImagePickerController*)[imagePickerNavigationController topViewController];
+    imagePicker.delegate = self;
+    
+    if ([sender isKindOfClass:[CardView class]])
+        imagePicker.imagesPrefix = @"obj_";
+    else if ([sender isKindOfClass:[SilhouetteButton class]])
+        imagePicker.imagesPrefix = @"sil_";
+    else
+        imagePicker.imagesPrefix = @"tema_";
+    
+    self.controlWaitingForImage = sender;
+    
+    [self presentViewController:imagePickerNavigationController animated:YES completion:nil];
+}
+
+
+- (void) imagePickerController:(ImagePickerController *)picker didFinishPickingImageNamed:(NSString *)name
+{
+    if ([self.controlWaitingForImage isKindOfClass:[CardView class]]){
+        CardView *card = (CardView*)self.controlWaitingForImage;
+        card.imageView.image = [UIImage imageNamed:name];
+        card.imageName = name;
+    }
+    else if ([self.controlWaitingForImage isKindOfClass:[SilhouetteButton class]]) {
+        SilhouetteButton *silhouette = (SilhouetteButton*)self.controlWaitingForImage;
+        [silhouette setImage:[UIImage imageNamed:name] forState:UIControlStateNormal];
+        silhouette.imageName = name;
+    }
+    else {
+        self.activityImageName = name;
+        [((UIButton*)self.controlWaitingForImage) setImage:[UIImage imageNamed:name] forState:UIControlStateNormal];
+    }
+    
+    [self arrangeSilhouettes];
+    [self arrageCards];
+    
+    self.controlWaitingForImage = nil;
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+
+- (void) imagePickerControllerDidCancel:(ImagePickerController *)picker
+{
+    if ([picker.imagesPrefix isEqualToString:@"obj_"]){
+        CardView *card = [self.cardViewsArray lastObject];
+        if (card.imageName == nil){
+            [card removeFromSuperview];
+            [self.cardViewsArray removeLastObject];
+            if (self.cardViewsArray.count == 0)
+                self.deleteCardButton.hidden = YES;
+        }
+    }
+    else if ([picker.imagesPrefix isEqualToString:@"sil_"]) {
+        SilhouetteButton *silhouette = [self.silhouettes lastObject];
+        if (silhouette.imageName == nil){
+            [silhouette removeFromSuperview];
+            [self.silhouettes removeLastObject];
+            if (self.silhouettes.count == 0)
+                self.deleteSilhouetteButton.hidden = YES;
+        }
+    }
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+
 #pragma mark - Alert view delegate
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex == 0) {
-        [self.delegate activityHasFinishedSuccessfully:NO];
+    if ([alertView.title isEqualToString:MaxDistanceTitle]) {
+        _maxAcceptableDistance = [[[alertView textFieldAtIndex:0] text] integerValue];
+        NSString *buttonTitle = [NSString stringWithFormat:@"Max distance = %d", (int)self.maxAcceptableDistance];
+        [self.maxDistanceButton setTitle:buttonTitle forState:UIControlStateNormal];
+    }
+    else if ([alertView.title isEqualToString:MaxRotationTitle]){
+        _maxAcceptableRotation = [[[alertView textFieldAtIndex:0] text] integerValue];
+        NSString *buttonTitle = [NSString stringWithFormat:@"Max rotation = %d", (int)_maxAcceptableRotation];
+        [self.maxRotationButton setTitle:buttonTitle forState:UIControlStateNormal];
+    }
+    else if ([alertView.title isEqualToString:MaxScaleTitle]){
+        _maxAcceptableScaleVariation = [[[alertView textFieldAtIndex:0] text] floatValue];
+        NSString *buttonTitle = [NSString stringWithFormat:@"Max scale = %.2f", _maxAcceptableScaleVariation];
+        [self.maxScaleButton setTitle:buttonTitle forState:UIControlStateNormal];
+    }
+    else if ([alertView.title isEqualToString:TaskNameTitle]) {
+        self.task.taskID = [[alertView textFieldAtIndex:0] text];
+        [self saveActivity];
+        if ([self.delegate respondsToSelector:@selector(activityHasFinishedEditingTask:)])
+            [self.delegate activityHasFinishedEditingTask:self.task];
     }
     else {
-        NSString *inputText = [[alertView textFieldAtIndex:0] text];
-        self.resultsFileName = [inputText stringByAppendingString:@".results"];
+        if (buttonIndex == 0)
+            [self.delegate activityHasFinishedSuccessfully:NO];
+        else {
+            NSString *inputText = [[alertView textFieldAtIndex:0] text];
+            self.resultsFileName = [inputText stringByAppendingString:@".results"];
+        }
     }
+}
+
+
+#pragma mark - Maxs acceptable Buttons
+
+- (IBAction) maxDistanceButtonPressed
+{
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:MaxDistanceTitle
+                                                        message:@"Introduzca el error máximo de distancia aceptable"
+                                                       delegate:self
+                                              cancelButtonTitle:@"Cancelar"
+                                              otherButtonTitles:@"OK", nil];
+    alertView.alertViewStyle = UIAlertViewStylePlainTextInput;
+    [[alertView textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeNumberPad];
+    [alertView show];
+}
+
+
+- (IBAction) maxRotationButtonPressed
+{
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:MaxRotationTitle
+                                                        message:@"Introduzca el error máximo de rotación aceptable"
+                                                       delegate:self
+                                              cancelButtonTitle:@"Cancelar"
+                                              otherButtonTitles:@"OK", nil];
+    alertView.alertViewStyle = UIAlertViewStylePlainTextInput;
+    [[alertView textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeNumberPad];
+    [alertView show];
+}
+
+
+- (IBAction) maxScaleButtonPressed
+{
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:MaxScaleTitle
+                                                        message:@"Introduzca el error máximo de escalado aceptable"
+                                                       delegate:self
+                                              cancelButtonTitle:@"Cancelar"
+                                              otherButtonTitles:@"OK", nil];
+    alertView.alertViewStyle = UIAlertViewStylePlainTextInput;
+    [[alertView textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeNumberPad];
+    [alertView show];
+}
+
+
+#pragma mark - Buttons
+
+- (IBAction) closeActivity
+{
+    [self saveResults];
+    
+    [self.delegate activityHasFinishedSuccessfully:NO];
+}
+
+
+- (IBAction) saveButtonPressed:(id)sender
+{
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:TaskNameTitle
+                                                        message:@"Introduzca el nombre de la tarea"
+                                                       delegate:self
+                                              cancelButtonTitle:@"Cancelar"
+                                              otherButtonTitles:@"Guardar", nil];
+    alertView.alertViewStyle = UIAlertViewStylePlainTextInput;
+    [alertView show];
+}
+
+
+- (IBAction) cancelButtonPressed:(id)sender
+{
+    if ([self.delegate respondsToSelector:@selector(activityHasFinishedEditingTask:)])
+        [self.delegate activityHasFinishedEditingTask:nil];
 }
 
 
@@ -505,7 +852,7 @@
     [self arrangeSilhouettes];
     [self arrageCards];
     
-    self.activityImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"imagen_tema_%i", self.task.taskID]];
+    [self.activityImageButton setImage:[UIImage imageNamed:self.activityImageName] forState:UIControlStateNormal];
     
     self.remainingSilhouettes = self.silhouettes.count;
 }
@@ -556,10 +903,11 @@
     // Max amount of cards will always be 6
     NSInteger rows = (self.cardViewsArray.count > 2) ? 2 : 1;
     NSInteger columns = (self.cardViewsArray.count > 2) ? round(((CGFloat)self.cardViewsArray.count) / 2.0) : 2;
-    CGFloat   height = [[self.silhouettes firstObject] frame].size.height;
-    CGFloat   xOrigin = self.activityImageView.frame.origin.x + self.activityImageView.frame.size.width;
+    CGFloat   xOrigin = self.activityImageButton.frame.origin.x + self.activityImageButton.frame.size.width;
+    CGFloat   maxHeight = (self.view.frame.size.height - (MIN_VERTICAL_MARGIN * 4)) / 3.0;
     CGFloat   availableHorizontalSpace = self.view.frame.size.width - xOrigin;
-    CGFloat   availableVerticalSpace = [[self.silhouettes firstObject] frame].origin.y;
+    CGFloat   availableVerticalSpace = (self.silhouettes.count > 0) ? [[self.silhouettes firstObject] frame].origin.y : self.view.frame.size.height - maxHeight - (MIN_VERTICAL_MARGIN*2);
+    CGFloat   height = (self.silhouettes.count > 0) ? [[self.silhouettes firstObject] frame].size.height : maxHeight;
     
     for (int i = 0; i < self.cardViewsArray.count; i++) {
         
@@ -618,6 +966,7 @@
         }
         
         cumulativeWidth = availableSpace;
+        
     }
     
     /* --  Ajust positions  -- */

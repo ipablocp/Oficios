@@ -12,10 +12,37 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
+    BOOL filesCopied = [[NSUserDefaults standardUserDefaults] boolForKey:@"filesCopied"];
+    if (!filesCopied) {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"filesCopied"];
+        [self copyConfigFilesToDocuments];
+    }
+    
     return YES;
 }
-							
+
+- (void) copyConfigFilesToDocuments
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSError *error;
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *resourceDirectory = [[NSBundle mainBundle] resourcePath];
+    NSArray *resourceFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:resourceDirectory error:NULL];
+    
+    // Get the list of config files
+    NSPredicate *fltr = [NSPredicate predicateWithFormat:@"self ENDSWITH '.config'"];
+    NSArray *configFiles = [resourceFiles filteredArrayUsingPredicate:fltr];
+    
+    for (NSString *fileName in configFiles) {
+        NSString *fromPath = [resourceDirectory stringByAppendingPathComponent:fileName];
+        NSString *toPath = [documentsDirectory stringByAppendingPathComponent:fileName];
+        
+        if ([fileManager fileExistsAtPath:toPath] == NO)
+            [fileManager copyItemAtPath:fromPath toPath:toPath error:&error];
+    }
+}
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

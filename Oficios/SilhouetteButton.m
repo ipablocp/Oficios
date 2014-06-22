@@ -16,6 +16,8 @@
 - (id)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
+        self.imageView.layer.magnificationFilter = kCAFilterTrilinear;
+        self.imageView.layer.minificationFilter = kCAFilterTrilinear;
     }
     return self;
 }

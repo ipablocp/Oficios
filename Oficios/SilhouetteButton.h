@@ -11,5 +11,6 @@
 @interface SilhouetteButton : UIButton
 
 @property (nonatomic) NSInteger silhouetteID;
+@property (strong, nonatomic) NSString *imageName;
 
 @end

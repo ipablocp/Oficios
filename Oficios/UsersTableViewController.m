@@ -9,7 +9,6 @@
 
 // VCs
 #import "UsersTableViewController.h"
-#import "ChapterTableViewController.h"
 // Model
 #import "User.h"
 #import "Chapter.h"
@@ -29,8 +28,12 @@
     [super viewDidLoad];
     
     // Read XML users
-    NSString *nameOfFile = @"session.config";
-    NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"sesion" withExtension:@"config"];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *nameOfFile = @"sesion.config";
+    NSString *fileString = [@"file://" stringByAppendingString:[documentsDirectory stringByAppendingPathComponent:nameOfFile]];
+    NSURL *fileURL = [NSURL URLWithString:[fileString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    
     NSXMLParser *parser = [[NSXMLParser alloc] initWithContentsOfURL:fileURL];
     [parser setDelegate:self];
     BOOL parsedSuccessfully = [parser parse];
@@ -71,6 +74,7 @@
         ChapterTableViewController *tareaViewController = (ChapterTableViewController*)[tareaNavigationController topViewController];
 
         tareaViewController.user = self.users[indexPath.row];
+        tareaViewController.delegate = self;
         
         // Load user activities
         UIViewController *navigationViewController = self.splitViewController.viewControllers[0];
@@ -120,8 +124,7 @@
         User *user = [self.users lastObject];
         Chapter *chapter = [user.chapters lastObject];
         Task *task = [[Task alloc] init];
-        task.taskID = [[attributeDict objectForKey:@"id"] integerValue];
-        task.taskName = [attributeDict objectForKey:@"name"];
+        task.taskID = [attributeDict objectForKey:@"id"];
         [chapter.tasks addObject:task];
     }
 }
@@ -138,11 +141,53 @@
 }
 
 
+- (void) saveSession
+{
+    NSMutableString *sessionString = [[NSMutableString alloc] init];
+    
+    for (User *user in self.users) {
+        [sessionString appendFormat:@"<usuario id=\"%@\" name=\"%@\"> \n\n", user.userID, user.name];
+        
+        for (Chapter *chapter in user.chapters) {
+            [sessionString appendFormat:@"\t <tema id=\"%@\" name=\"%@\"> \n", chapter.chapterID, chapter.chapterName];
+            
+            for (Task *task in chapter.tasks)
+                [sessionString appendFormat:@"\t\t <tarea id=\"%@\" /> \n", task.taskID];
+            
+            [sessionString appendFormat:@"\t </tema> \n\n"];
+        }
+        
+        [sessionString appendFormat:@"</usuario> \n\n"];
+    }
+    
+    // Get file path
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = paths[0];
+    NSString *filePath = [documentsDirectory stringByAppendingString:@"/sesion.config"];
+    NSLog(@"filePath = %@", filePath);
+    
+    // Write results to file
+    NSError *error;
+    BOOL succeed = [sessionString writeToFile:filePath atomically:YES encoding:NSUTF8StringEncoding error:&error];
+    
+    if (!succeed)
+        NSLog(@"Error writing the results to file: %@", error);
+}
+
+
 #pragma mark - Settings delegate
 
 - (void) settingsDidFinishEditting
 {
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+}
+
+
+#pragma mark - ChapterTableViewControllerDelegate
+
+- (void) taskAdded
+{
+    [self saveSession];
 }
 
 

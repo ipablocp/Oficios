@@ -62,7 +62,6 @@
     // Set image quality
     self.imageView.layer.magnificationFilter = kCAFilterTrilinear;
     self.imageView.layer.minificationFilter = kCAFilterTrilinear;
-    self.imageView.layer.shouldRasterize = YES;
     _oneFingerRotationEnable = NO;
     lastTouchPosition = CGPointMake(0.0, 1.0);
 }
@@ -240,14 +239,14 @@
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    [super touchesEnded:touches withEvent:event];
-    
     if (isRecognisingRotation) {
         if ([self.delegate respondsToSelector:@selector(cardEndedInteracting:)])
             [self.delegate cardEndedInteracting:self];
         
         isRecognisingRotation = NO;
     }
+    else
+        [super touchesEnded:touches withEvent:event];
 }
 
 
@@ -321,6 +320,7 @@
     
     return _interactions;
 }
+
 
 - (void) setBounds:(CGRect)bounds
 {

@@ -33,7 +33,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[self.user.chapters[section] tasks] count];
+    return [[self.user.chapters[section] tasks] count] + 1;
 }
 
 
@@ -48,7 +48,15 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TareaCell" forIndexPath:indexPath];
     
     Chapter *chapter = self.user.chapters[indexPath.section];
-    cell.textLabel.text = [chapter.tasks[indexPath.row] taskName];
+    
+    if (indexPath.row < chapter.tasks.count) {
+        cell.textLabel.text = [chapter.tasks[indexPath.row] taskID];
+        [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
+    }
+    else {
+        cell.textLabel.text = @"+";
+        [cell setAccessoryType:UITableViewCellAccessoryNone];
+    }
     
     return cell;
 }
@@ -56,14 +64,20 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    UINavigationController *navigationController = [self.storyboard instantiateViewControllerWithIdentifier:@"ActivityNavigationController"];
+    ActivityViewController *activityViewController = (ActivityViewController*)[navigationController topViewController];
+    
     self.currentTaskIndexPath = indexPath;
     Chapter *chapter = self.user.chapters[indexPath.section];
     
-    UINavigationController *navigationController = [self.storyboard instantiateViewControllerWithIdentifier:@"ActivityNavigationController"];
-    ActivityViewController *activityViewController = (ActivityViewController*)[navigationController topViewController];
-    self.currentActivityViewController = activityViewController;
+    if (indexPath.row < chapter.tasks.count) {
+        self.currentActivityViewController = activityViewController;
+        activityViewController.task = chapter.tasks[indexPath.row];
+        activityViewController.editorMode = NO;
+    }
+    else
+        activityViewController.editorMode = YES;
     
-    activityViewController.task = chapter.tasks[indexPath.row];
     activityViewController.delegate = self;
     
     [self.navigationController presentViewController:navigationController animated:YES completion:nil];
@@ -79,9 +93,10 @@
         Task *nextTask;
         
         // There is another task in the current chapter
-        if (self.currentTaskIndexPath.row < [self.tableView numberOfRowsInSection:self.currentTaskIndexPath.section]-1) {
+        if (self.currentTaskIndexPath.row < [self.tableView numberOfRowsInSection:self.currentTaskIndexPath.section]-2) {
             self.currentTaskIndexPath = [NSIndexPath indexPathForItem:self.currentTaskIndexPath.row+1 inSection:self.currentTaskIndexPath.section];
-            nextTask = [[self.user.chapters[self.currentTaskIndexPath.section] tasks] objectAtIndex:self.currentTaskIndexPath.row];
+            Chapter *chapter = self.user.chapters[self.currentTaskIndexPath.section];
+            nextTask = chapter.tasks[self.currentTaskIndexPath.row];
             self.currentActivityViewController.task = nextTask;
             [self.currentActivityViewController reloadUIForCurrentTask];
         }
@@ -101,6 +116,23 @@
         self.currentActivityViewController = nil;
         [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     }
+}
+
+
+- (void) activityHasFinishedEditingTask:(Task*)task;
+{
+    if (task != nil) {
+        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
+        Chapter *chapter = self.user.chapters[indexPath.section];
+        [chapter.tasks addObject:task];
+    }
+    
+    [self.tableView reloadData];
+    
+    if ([self.delegate respondsToSelector:@selector(taskAdded)])
+        [self.delegate taskAdded];
+    
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 
 

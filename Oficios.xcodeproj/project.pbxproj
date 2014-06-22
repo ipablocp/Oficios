@@ -8,11 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		6E24C063190EEAF500188D53 /* UIImage+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E24C062190EEAF500188D53 /* UIImage+Extensions.m */; };
+		6E5003FC19576C9B0073FE4C /* tarea Bomberos 3.config in Resources */ = {isa = PBXBuildFile; fileRef = 6E5003FA19576C9B0073FE4C /* tarea Bomberos 3.config */; };
+		6E5003FD19576C9B0073FE4C /* tarea Bomberos 4.config in Resources */ = {isa = PBXBuildFile; fileRef = 6E5003FB19576C9B0073FE4C /* tarea Bomberos 4.config */; };
 		6E53059B190D334E00DD9914 /* UsersTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E53059A190D334E00DD9914 /* UsersTableViewController.m */; };
 		6E5305A1190D555D00DD9914 /* ChapterTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E5305A0190D555D00DD9914 /* ChapterTableViewController.m */; };
 		6E591DA81901C68E00D157EA /* Star.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E591DA71901C68E00D157EA /* Star.png */; };
 		6E65DE591943731900842C85 /* Task.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E65DE581943731900842C85 /* Task.m */; };
-		6E9CBEC618F88D1200BDF62A /* imagen_tema_1.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E9CBEB918F88D1200BDF62A /* imagen_tema_1.png */; };
+		6E8F0888194CB34400ED010D /* ActivityImagePlaceholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E8F0887194CB34400ED010D /* ActivityImagePlaceholder.png */; };
+		6E8F088B194CC24900ED010D /* ImagePickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E8F088A194CC24900ED010D /* ImagePickerController.m */; };
+		6E8F0890194CCE7000ED010D /* ImagePickerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E8F088F194CCE7000ED010D /* ImagePickerCell.m */; };
+		6E8F0892194CEA4900ED010D /* SquarePlaceholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E8F0891194CEA4900ED010D /* SquarePlaceholder.png */; };
+		6E9CBEC618F88D1200BDF62A /* tema_bomberos.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E9CBEB918F88D1200BDF62A /* tema_bomberos.png */; };
 		6E9CBEC718F88D1200BDF62A /* obj_0.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E9CBEBA18F88D1200BDF62A /* obj_0.png */; };
 		6E9CBEC818F88D1200BDF62A /* obj_1.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E9CBEBB18F88D1200BDF62A /* obj_1.png */; };
 		6E9CBEC918F88D1200BDF62A /* obj_2.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E9CBEBC18F88D1200BDF62A /* obj_2.png */; };
@@ -26,8 +32,7 @@
 		6E9CBED118F88D1200BDF62A /* sil_4.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E9CBEC418F88D1200BDF62A /* sil_4.png */; };
 		6E9CBED218F88D1200BDF62A /* sil_5.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E9CBEC518F88D1200BDF62A /* sil_5.png */; };
 		6E9CBED518F89F7D00BDF62A /* CardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9CBED418F89F7D00BDF62A /* CardView.m */; };
-		6EBB19F1190D97CE00237AB2 /* sesion.config in Resources */ = {isa = PBXBuildFile; fileRef = 6EBB19F0190D97CE00237AB2 /* sesion.config */; };
-		6EC7A62519435F1100365A01 /* tarea_2.config in Resources */ = {isa = PBXBuildFile; fileRef = 6EC7A62419435F1100365A01 /* tarea_2.config */; };
+		6EAC7866195788F40044D909 /* imagenes.list in Resources */ = {isa = PBXBuildFile; fileRef = 6EAC7865195788F40044D909 /* imagenes.list */; };
 		6EC7A6291943655000365A01 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7A6281943655000365A01 /* User.m */; };
 		6EC7A62C194365BD00365A01 /* Chapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7A62B194365BD00365A01 /* Chapter.m */; };
 		6EE8DC2F18F87B5C00F7E6E8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EE8DC2E18F87B5C00F7E6E8 /* Foundation.framework */; };
@@ -44,13 +49,14 @@
 		6EE8DC5018F87B5C00F7E6E8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EE8DC3218F87B5C00F7E6E8 /* UIKit.framework */; };
 		6EE8DC5818F87B5C00F7E6E8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6EE8DC5618F87B5C00F7E6E8 /* InfoPlist.strings */; };
 		6EE8DC5A18F87B5C00F7E6E8 /* OficiosTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EE8DC5918F87B5C00F7E6E8 /* OficiosTests.m */; };
-		6EE9E3BE19479652001C1D13 /* imagen_tema_2.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EE9E3BD19479652001C1D13 /* imagen_tema_2.png */; };
 		6EEE4CB11943A9C100DF9053 /* Interaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EEE4CB01943A9C100DF9053 /* Interaction.m */; };
 		6EEE4CB41943AE7C00DF9053 /* CardInteractions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EEE4CB31943AE7C00DF9053 /* CardInteractions.m */; };
 		6EF6186F1902991100C327C6 /* Correct.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6EF6186D1902991100C327C6 /* Correct.wav */; };
 		6EF618701902991100C327C6 /* Incorrect.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6EF6186E1902991100C327C6 /* Incorrect.wav */; };
-		6EF618721902A2CE00C327C6 /* tarea_1.config in Resources */ = {isa = PBXBuildFile; fileRef = 6EF618711902A2CE00C327C6 /* tarea_1.config */; };
 		6EF618751902E8AE00C327C6 /* SilhouetteButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF618741902E8AE00C327C6 /* SilhouetteButton.m */; };
+		6EFCA4A019522EAC00C4CA2E /* sesion.config in Resources */ = {isa = PBXBuildFile; fileRef = 6EFCA49C19522EAC00C4CA2E /* sesion.config */; };
+		6EFCA4A119522EAC00C4CA2E /* tarea Bomberos 1.config in Resources */ = {isa = PBXBuildFile; fileRef = 6EFCA49D19522EAC00C4CA2E /* tarea Bomberos 1.config */; };
+		6EFCA4A219522EAC00C4CA2E /* tarea Bomberos 2.config in Resources */ = {isa = PBXBuildFile; fileRef = 6EFCA49E19522EAC00C4CA2E /* tarea Bomberos 2.config */; };
 		6EFCC7D21944BD220062002D /* SettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EFCC7D11944BD220062002D /* SettingsTableViewController.m */; };
 		6EFCC7D51944C0C50062002D /* SettingsTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EFCC7D41944C0C50062002D /* SettingsTableViewCell.m */; };
 /* End PBXBuildFile section */
@@ -68,6 +74,8 @@
 /* Begin PBXFileReference section */
 		6E24C061190EEAF500188D53 /* UIImage+Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Extensions.h"; sourceTree = "<group>"; };
 		6E24C062190EEAF500188D53 /* UIImage+Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Extensions.m"; sourceTree = "<group>"; };
+		6E5003FA19576C9B0073FE4C /* tarea Bomberos 3.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "tarea Bomberos 3.config"; sourceTree = "<group>"; };
+		6E5003FB19576C9B0073FE4C /* tarea Bomberos 4.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "tarea Bomberos 4.config"; sourceTree = "<group>"; };
 		6E530599190D334E00DD9914 /* UsersTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsersTableViewController.h; sourceTree = "<group>"; };
 		6E53059A190D334E00DD9914 /* UsersTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UsersTableViewController.m; sourceTree = "<group>"; };
 		6E53059F190D555D00DD9914 /* ChapterTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChapterTableViewController.h; sourceTree = "<group>"; };
@@ -75,7 +83,13 @@
 		6E591DA71901C68E00D157EA /* Star.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Star.png; sourceTree = "<group>"; };
 		6E65DE571943731800842C85 /* Task.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Task.h; sourceTree = "<group>"; };
 		6E65DE581943731900842C85 /* Task.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Task.m; sourceTree = "<group>"; };
-		6E9CBEB918F88D1200BDF62A /* imagen_tema_1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = imagen_tema_1.png; sourceTree = "<group>"; };
+		6E8F0887194CB34400ED010D /* ActivityImagePlaceholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ActivityImagePlaceholder.png; sourceTree = "<group>"; };
+		6E8F0889194CC24900ED010D /* ImagePickerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImagePickerController.h; sourceTree = "<group>"; };
+		6E8F088A194CC24900ED010D /* ImagePickerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImagePickerController.m; sourceTree = "<group>"; };
+		6E8F088E194CCE7000ED010D /* ImagePickerCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImagePickerCell.h; sourceTree = "<group>"; };
+		6E8F088F194CCE7000ED010D /* ImagePickerCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImagePickerCell.m; sourceTree = "<group>"; };
+		6E8F0891194CEA4900ED010D /* SquarePlaceholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SquarePlaceholder.png; sourceTree = "<group>"; };
+		6E9CBEB918F88D1200BDF62A /* tema_bomberos.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tema_bomberos.png; sourceTree = "<group>"; };
 		6E9CBEBA18F88D1200BDF62A /* obj_0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = obj_0.png; sourceTree = "<group>"; };
 		6E9CBEBB18F88D1200BDF62A /* obj_1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = obj_1.png; sourceTree = "<group>"; };
 		6E9CBEBC18F88D1200BDF62A /* obj_2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = obj_2.png; sourceTree = "<group>"; };
@@ -90,8 +104,7 @@
 		6E9CBEC518F88D1200BDF62A /* sil_5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sil_5.png; sourceTree = "<group>"; };
 		6E9CBED318F89F7D00BDF62A /* CardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CardView.h; sourceTree = "<group>"; };
 		6E9CBED418F89F7D00BDF62A /* CardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CardView.m; sourceTree = "<group>"; };
-		6EBB19F0190D97CE00237AB2 /* sesion.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sesion.config; sourceTree = "<group>"; };
-		6EC7A62419435F1100365A01 /* tarea_2.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tarea_2.config; sourceTree = "<group>"; };
+		6EAC7865195788F40044D909 /* imagenes.list */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = imagenes.list; sourceTree = "<group>"; };
 		6EC7A6271943655000365A01 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
 		6EC7A6281943655000365A01 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		6EC7A62A194365BD00365A01 /* Chapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chapter.h; sourceTree = "<group>"; };
@@ -116,16 +129,17 @@
 		6EE8DC5518F87B5C00F7E6E8 /* OficiosTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OficiosTests-Info.plist"; sourceTree = "<group>"; };
 		6EE8DC5718F87B5C00F7E6E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6EE8DC5918F87B5C00F7E6E8 /* OficiosTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OficiosTests.m; sourceTree = "<group>"; };
-		6EE9E3BD19479652001C1D13 /* imagen_tema_2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = imagen_tema_2.png; sourceTree = "<group>"; };
 		6EEE4CAF1943A9C100DF9053 /* Interaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interaction.h; sourceTree = "<group>"; };
 		6EEE4CB01943A9C100DF9053 /* Interaction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Interaction.m; sourceTree = "<group>"; };
 		6EEE4CB21943AE7C00DF9053 /* CardInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CardInteractions.h; sourceTree = "<group>"; };
 		6EEE4CB31943AE7C00DF9053 /* CardInteractions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CardInteractions.m; sourceTree = "<group>"; };
 		6EF6186D1902991100C327C6 /* Correct.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Correct.wav; sourceTree = "<group>"; };
 		6EF6186E1902991100C327C6 /* Incorrect.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Incorrect.wav; sourceTree = "<group>"; };
-		6EF618711902A2CE00C327C6 /* tarea_1.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tarea_1.config; sourceTree = "<group>"; };
 		6EF618731902E8AE00C327C6 /* SilhouetteButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SilhouetteButton.h; sourceTree = "<group>"; };
 		6EF618741902E8AE00C327C6 /* SilhouetteButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SilhouetteButton.m; sourceTree = "<group>"; };
+		6EFCA49C19522EAC00C4CA2E /* sesion.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sesion.config; sourceTree = "<group>"; };
+		6EFCA49D19522EAC00C4CA2E /* tarea Bomberos 1.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "tarea Bomberos 1.config"; sourceTree = "<group>"; };
+		6EFCA49E19522EAC00C4CA2E /* tarea Bomberos 2.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "tarea Bomberos 2.config"; sourceTree = "<group>"; };
 		6EFCC7D01944BD220062002D /* SettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsTableViewController.h; sourceTree = "<group>"; };
 		6EFCC7D11944BD220062002D /* SettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsTableViewController.m; sourceTree = "<group>"; };
 		6EFCC7D31944C0C50062002D /* SettingsTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsTableViewCell.h; sourceTree = "<group>"; };
@@ -182,8 +196,7 @@
 		6E9CBEB818F88D1200BDF62A /* tema_0 */ = {
 			isa = PBXGroup;
 			children = (
-				6E9CBEB918F88D1200BDF62A /* imagen_tema_1.png */,
-				6EE9E3BD19479652001C1D13 /* imagen_tema_2.png */,
+				6E9CBEB918F88D1200BDF62A /* tema_bomberos.png */,
 				6E9CBEBA18F88D1200BDF62A /* obj_0.png */,
 				6E9CBEBB18F88D1200BDF62A /* obj_1.png */,
 				6E9CBEBC18F88D1200BDF62A /* obj_2.png */,
@@ -203,9 +216,7 @@
 		6EC7A62319435B6400365A01 /* Archivos de configuracion */ = {
 			isa = PBXGroup;
 			children = (
-				6EF618711902A2CE00C327C6 /* tarea_1.config */,
-				6EC7A62419435F1100365A01 /* tarea_2.config */,
-				6EBB19F0190D97CE00237AB2 /* sesion.config */,
+				6EFCA49A19522EAC00C4CA2E /* Config */,
 				6E9CBEB718F88D1200BDF62A /* tema */,
 			);
 			name = "Archivos de configuracion";
@@ -267,6 +278,7 @@
 				6E53059A190D334E00DD9914 /* UsersTableViewController.m */,
 				6E53059F190D555D00DD9914 /* ChapterTableViewController.h */,
 				6E5305A0190D555D00DD9914 /* ChapterTableViewController.m */,
+				6EFF4CA7194DBBE900E997F7 /* ImagePicker */,
 				6E5305A2190D556D00DD9914 /* Actividad */,
 				6EFCC7D61944C0CE0062002D /* Settings */,
 				6EC7A6261943653000365A01 /* Modelo */,
@@ -285,6 +297,8 @@
 				6EF6186D1902991100C327C6 /* Correct.wav */,
 				6EF6186E1902991100C327C6 /* Incorrect.wav */,
 				6E591DA71901C68E00D157EA /* Star.png */,
+				6E8F0887194CB34400ED010D /* ActivityImagePlaceholder.png */,
+				6E8F0891194CEA4900ED010D /* SquarePlaceholder.png */,
 				6EE8DC3618F87B5C00F7E6E8 /* Oficios-Info.plist */,
 				6EE8DC3718F87B5C00F7E6E8 /* InfoPlist.strings */,
 				6EE8DC3A18F87B5C00F7E6E8 /* main.m */,
@@ -311,6 +325,19 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		6EFCA49A19522EAC00C4CA2E /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				6EAC7865195788F40044D909 /* imagenes.list */,
+				6EFCA49C19522EAC00C4CA2E /* sesion.config */,
+				6EFCA49D19522EAC00C4CA2E /* tarea Bomberos 1.config */,
+				6EFCA49E19522EAC00C4CA2E /* tarea Bomberos 2.config */,
+				6E5003FA19576C9B0073FE4C /* tarea Bomberos 3.config */,
+				6E5003FB19576C9B0073FE4C /* tarea Bomberos 4.config */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
 		6EFCC7D61944C0CE0062002D /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -320,6 +347,17 @@
 				6EFCC7D41944C0C50062002D /* SettingsTableViewCell.m */,
 			);
 			name = Settings;
+			sourceTree = "<group>";
+		};
+		6EFF4CA7194DBBE900E997F7 /* ImagePicker */ = {
+			isa = PBXGroup;
+			children = (
+				6E8F0889194CC24900ED010D /* ImagePickerController.h */,
+				6E8F088A194CC24900ED010D /* ImagePickerController.m */,
+				6E8F088E194CCE7000ED010D /* ImagePickerCell.h */,
+				6E8F088F194CCE7000ED010D /* ImagePickerCell.m */,
+			);
+			name = ImagePicker;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -400,27 +438,31 @@
 			files = (
 				6EE8DC4718F87B5C00F7E6E8 /* Images.xcassets in Resources */,
 				6E9CBECF18F88D1200BDF62A /* sil_2.png in Resources */,
+				6EFCA4A119522EAC00C4CA2E /* tarea Bomberos 1.config in Resources */,
+				6EAC7866195788F40044D909 /* imagenes.list in Resources */,
 				6E9CBECC18F88D1200BDF62A /* obj_5.png in Resources */,
 				6E9CBECA18F88D1200BDF62A /* obj_3.png in Resources */,
 				6E9CBED018F88D1200BDF62A /* sil_3.png in Resources */,
-				6EE9E3BE19479652001C1D13 /* imagen_tema_2.png in Resources */,
-				6EBB19F1190D97CE00237AB2 /* sesion.config in Resources */,
 				6EF618701902991100C327C6 /* Incorrect.wav in Resources */,
 				6E591DA81901C68E00D157EA /* Star.png in Resources */,
-				6EF618721902A2CE00C327C6 /* tarea_1.config in Resources */,
 				6E9CBEC818F88D1200BDF62A /* obj_1.png in Resources */,
 				6E9CBECE18F88D1200BDF62A /* sil_1.png in Resources */,
 				6E9CBEC718F88D1200BDF62A /* obj_0.png in Resources */,
 				6E9CBED218F88D1200BDF62A /* sil_5.png in Resources */,
-				6E9CBEC618F88D1200BDF62A /* imagen_tema_1.png in Resources */,
+				6E9CBEC618F88D1200BDF62A /* tema_bomberos.png in Resources */,
 				6E9CBEC918F88D1200BDF62A /* obj_2.png in Resources */,
 				6E9CBED118F88D1200BDF62A /* sil_4.png in Resources */,
 				6EE8DC3918F87B5C00F7E6E8 /* InfoPlist.strings in Resources */,
+				6E5003FD19576C9B0073FE4C /* tarea Bomberos 4.config in Resources */,
+				6E8F0892194CEA4900ED010D /* SquarePlaceholder.png in Resources */,
+				6EFCA4A019522EAC00C4CA2E /* sesion.config in Resources */,
+				6E8F0888194CB34400ED010D /* ActivityImagePlaceholder.png in Resources */,
 				6E9CBECB18F88D1200BDF62A /* obj_4.png in Resources */,
-				6EC7A62519435F1100365A01 /* tarea_2.config in Resources */,
 				6E9CBECD18F88D1200BDF62A /* sil_0.png in Resources */,
+				6E5003FC19576C9B0073FE4C /* tarea Bomberos 3.config in Resources */,
 				6EE8DC4218F87B5C00F7E6E8 /* Main.storyboard in Resources */,
 				6EF6186F1902991100C327C6 /* Correct.wav in Resources */,
+				6EFCA4A219522EAC00C4CA2E /* tarea Bomberos 2.config in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -446,8 +488,10 @@
 				6EC7A6291943655000365A01 /* User.m in Sources */,
 				6E65DE591943731900842C85 /* Task.m in Sources */,
 				6EC7A62C194365BD00365A01 /* Chapter.m in Sources */,
+				6E8F0890194CCE7000ED010D /* ImagePickerCell.m in Sources */,
 				6EF618751902E8AE00C327C6 /* SilhouetteButton.m in Sources */,
 				6E24C063190EEAF500188D53 /* UIImage+Extensions.m in Sources */,
+				6E8F088B194CC24900ED010D /* ImagePickerController.m in Sources */,
 				6EEE4CB41943AE7C00DF9053 /* CardInteractions.m in Sources */,
 				6E9CBED518F89F7D00BDF62A /* CardView.m in Sources */,
 				6E53059B190D334E00DD9914 /* UsersTableViewController.m in Sources */,
