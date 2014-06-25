@@ -149,12 +149,17 @@
         [sessionString appendFormat:@"<usuario id=\"%@\" name=\"%@\"> \n\n", user.userID, user.name];
         
         for (Chapter *chapter in user.chapters) {
-            [sessionString appendFormat:@"\t <tema id=\"%@\" name=\"%@\"> \n", chapter.chapterID, chapter.chapterName];
             
-            for (Task *task in chapter.tasks)
-                [sessionString appendFormat:@"\t\t <tarea id=\"%@\" /> \n", task.taskID];
-            
-            [sessionString appendFormat:@"\t </tema> \n\n"];
+            if (chapter.tasks.count > 0) {
+                
+                [sessionString appendFormat:@"\t <tema id=\"%@\" name=\"%@\"> \n", chapter.chapterID, chapter.chapterName];
+                
+                for (Task *task in chapter.tasks)
+                    [sessionString appendFormat:@"\t\t <tarea id=\"%@\" /> \n", task.taskID];
+                
+                [sessionString appendFormat:@"\t </tema> \n\n"];
+                
+            }
         }
         
         [sessionString appendFormat:@"</usuario> \n\n"];
@@ -185,7 +190,7 @@
 
 #pragma mark - ChapterTableViewControllerDelegate
 
-- (void) taskAdded
+- (void) taskChanged
 {
     [self saveSession];
 }

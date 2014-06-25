@@ -22,5 +22,5 @@
 
 
 @protocol ChapterTableViewControllerDelegate <NSObject>
-- (void) taskAdded;
+- (void) taskChanged;
 @end
