@@ -19,6 +19,7 @@
 @property (nonatomic) CGPoint originalCenter;
 @property (strong, nonatomic) NSMutableArray *interactions;
 @property (nonatomic) BOOL oneFingerRotationEnable;
+@property (nonatomic, readonly) BOOL animatingColorOverlay;
 
 // UI
 @property (strong, nonatomic) UIImageView *imageView;
@@ -40,6 +41,10 @@
 - (void) moveToOriginalPosition;
 - (void) showStarAnimated:(BOOL)animated completion:(void (^)(BOOL finished))completion;
 - (void) hideStarAnimated:(BOOL)animated;
+
+// Animations
+- (void) animateFlickeringColorOverlay;
+- (void) stopAnimatingFlickeringColorOverlay;
 
 @end
 

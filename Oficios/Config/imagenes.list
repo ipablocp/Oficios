@@ -1,5 +1,6 @@
 <imagenes>
     <imagen nombre="tema_bomberos" />
+    <imagen nombre="tema_cocinero" />
 
     <imagen nombre="obj_0" />
     <imagen nombre="obj_1" />
@@ -7,6 +8,12 @@
     <imagen nombre="obj_3" />
     <imagen nombre="obj_4" />
     <imagen nombre="obj_5" />
+    <imagen nombre="obj_6" />
+    <imagen nombre="obj_7" />
+    <imagen nombre="obj_8" />
+    <imagen nombre="obj_9" />
+    <imagen nombre="obj_10" />
+    <imagen nombre="obj_11" />
 
     <imagen nombre="sil_0" />
     <imagen nombre="sil_1" />
@@ -14,4 +21,10 @@
     <imagen nombre="sil_3" />
     <imagen nombre="sil_4" />
     <imagen nombre="sil_5" />
+    <imagen nombre="sil_6" />
+    <imagen nombre="sil_7" />
+    <imagen nombre="sil_8" />
+    <imagen nombre="sil_9" />
+    <imagen nombre="sil_10" />
+    <imagen nombre="sil_11" />
 </imagenes>

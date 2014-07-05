@@ -17,6 +17,7 @@
 #define MIN_HORIZONTAL_MARGIN 10
 
 #define DEGREES_TO_RADIANS(angle) ((angle) / 180.0 * M_PI)
+#define RADIANS_TO_DEGREES(angle) ((angle) / M_PI * 180.0)
 
 NSString *MaxDistanceTitle = @"Distancia máxima";
 NSString *MaxRotationTitle = @"Rotación máxima";
@@ -40,7 +41,7 @@ NSString *TaskNameTitle = @"Nombre de la tarea";
 -(id)initWithCoder:(NSCoder *)aDecoder
 {
     if (self = [super initWithCoder:aDecoder]) {
-        _maxAcceptableDistance = 30;
+        _maxAcceptableDistance = 120;
         _maxAcceptableRotation = 25;
         _maxAcceptableScaleVariation = .2;
     }
@@ -141,6 +142,8 @@ NSString *TaskNameTitle = @"Nombre de la tarea";
     Interaction *interaction = [card.interactions lastObject];
     interaction.end = clock() - self.creationTime;
     
+    __block BOOL isNearAWrongSilhouette = NO;
+    
     [self.silhouettes enumerateObjectsUsingBlock:^(SilhouetteButton *silhouette, NSUInteger idx, BOOL *stop) {
         
         // Check card is close to a silhouette
@@ -151,20 +154,29 @@ NSString *TaskNameTitle = @"Nombre de la tarea";
             // Check is the correct silhouette
             if (admissible && card.cardID == silhouette.silhouetteID && silhouette.hidden == NO) {
                 
+                *stop = YES;
+                isNearAWrongSilhouette = NO;
+                
                 if( !CGPointEqualToPoint(card.center, silhouette.center) )
                     [self lockCardPosition:card overSilhouette:silhouette];
                 
                 if ([self hasCardProperRotation:card]) {
                     //card.rotationGestureRecognizer.enabled = NO;
                     [self fixRotatioForCard:card];
+                    [card stopAnimatingFlickeringColorOverlay];
                 }
                 else {
                     //card.rotationGestureRecognizer.enabled = YES;
                     card.oneFingerRotationEnable = YES;
+                    [card animateFlickeringColorOverlay];
                 }
                 
-                if (![self hasCardProperScale:card])
+                if (![self hasCardProperScale:card]){
                     card.pinchGestureRecognizer.enabled = YES;
+                    [card animateFlickeringColorOverlay];
+                }
+                else
+                    [card stopAnimatingFlickeringColorOverlay];
                 
                 // Card Completed
                 if ([self hasCardProperRotation:card] && [self hasCardProperScale:card]) {
@@ -181,7 +193,7 @@ NSString *TaskNameTitle = @"Nombre de la tarea";
                     
                     self.remainingSilhouettes--;
                     
-                    // Star explotion
+                    [card stopAnimatingFlickeringColorOverlay];
                     
                     // Correct sound
                     [self playCorrectSound];
@@ -194,25 +206,31 @@ NSString *TaskNameTitle = @"Nombre de la tarea";
                         }
                     }];
                 }
+                else {
+                    [card animateFlickeringColorOverlay];
+                }
                 
             }
             else {
-                // Error sound
-                [self playIncorrectSound];
-                
-                [card flashCardWithColor:[UIColor redColor]];
-                
-                // Move to original place
-                [UIView animateWithDuration:1.0 delay:.0 usingSpringWithDamping:.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-                    
-                    [card moveToOriginalPosition];
-                    
-                } completion:nil];
-                
+                isNearAWrongSilhouette = YES;
             }
         }
         
     }];
+    
+    if (isNearAWrongSilhouette) {
+        // Error sound
+        [self playIncorrectSound];
+        
+        [card flashCardWithColor:[UIColor redColor]];
+        
+        // Move to original place
+        [UIView animateWithDuration:1.0 delay:.0 usingSpringWithDamping:.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+            
+            [card moveToOriginalPosition];
+            
+        } completion:nil];
+    }
 }
 
 
@@ -276,7 +294,7 @@ NSString *TaskNameTitle = @"Nombre de la tarea";
                 
                 interaction.isCorrect = YES;
                 
-                // Star explotion
+                [card stopAnimatingFlickeringColorOverlay];
                 
                 // Correct sound
                 [self playCorrectSound];
@@ -290,8 +308,10 @@ NSString *TaskNameTitle = @"Nombre de la tarea";
                 }];
                 
             }
-            else
+            else {
                 interaction.isCorrect = NO;
+                [card animateFlickeringColorOverlay];
+            }
             
         }
         else { // Incorrect match
@@ -377,7 +397,6 @@ NSString *TaskNameTitle = @"Nombre de la tarea";
                 
                 [silhouette addTarget:self action:@selector(objectTouched:) forControlEvents:UIControlEventTouchUpInside];
             }
-            
             
         }
     }
@@ -523,7 +542,7 @@ NSString *TaskNameTitle = @"Nombre de la tarea";
     // Add cards
     for (CardView *card in self.cardViewsArray) {
         NSString *cardID = [[card.imageName componentsSeparatedByString:@"_"] lastObject];
-        [activityString appendFormat:@"\t <objeto id=\"%@\" R=\"%f\" E=\"%f\" /> \n", cardID, CGAffineTransformGetAngle(card.transform), CGAffineTransformGetScale(card.transform).width];
+        [activityString appendFormat:@"\t <objeto id=\"%@\" R=\"%f\" E=\"%f\" /> \n", cardID, RADIANS_TO_DEGREES(CGAffineTransformGetAngle(card.transform)), CGAffineTransformGetScale(card.transform).width];
     }
     
     // Add audio

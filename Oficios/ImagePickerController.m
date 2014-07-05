@@ -58,6 +58,8 @@
     
     NSString *imageName = self.imageNames[indexPath.row];
     cell.imageView.image = [UIImage imageNamed:imageName];
+    cell.imageView.layer.minificationFilter = kCAFilterTrilinear;
+    cell.imageView.layer.magnificationFilter = kCAFilterTrilinear;
     
     return cell;
 }

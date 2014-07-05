@@ -287,9 +287,9 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="ffX-hz-3GX">
-                                <rect key="frame" x="281" y="738" width="127" height="30"/>
+                                <rect key="frame" x="277" y="738" width="136" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Max distance = 30">
+                                <state key="normal" title="Max distance = 120">
                                     <color key="titleColor" red="0.31636679290000003" green="0.31636679290000003" blue="0.31636679290000003" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>

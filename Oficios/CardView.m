@@ -155,25 +155,30 @@
 
 - (void) handlePinch:(UIPinchGestureRecognizer*)recognizer
 {
+    float currentScale = CGAffineTransformGetScale(self.transform).width;
+    
+    // Limit max scale
+    if ((recognizer.scale - 1.0) + currentScale > 2.0)
+        return;
+    
+    // Limit min scale
+    if ((recognizer.scale - 1.0) + currentScale < 0.6)
+        return;
+    
+    // Tell the delegate
     if(recognizer.state == UIGestureRecognizerStateBegan && [self.delegate respondsToSelector:@selector(cardView:willBegingRecognizingGesture:)])
         [self.delegate cardView:self willBegingRecognizingGesture:recognizer];
     
-    float currentScale = sqrt(self.transform.a * self.transform.a + self.transform.c * self.transform.c);
-    if (recognizer.scale >= 1.0 || (currentScale > 0.6 && recognizer.scale < 1.0)) {
-        
-        self.transform = CGAffineTransformScale(self.transform, recognizer.scale, recognizer.scale);
-        
-        //CGRect scaleRect = CGRectScale(self.bounds, recognizer.scale, recognizer.scale);
-        //[self setBounds:scaleRect];
-        
-        // Reset scale
-        recognizer.scale = 1.0;
-        
-        // Tell the delegate the end of the interaction
-        if (recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled)
-            if ([self.delegate respondsToSelector:@selector(cardEndedInteracting:)])
-                [self.delegate cardEndedInteracting:self];
-    }
+    // Scale
+    self.transform = CGAffineTransformScale(self.transform, recognizer.scale, recognizer.scale);
+    
+    // Reset scale
+    recognizer.scale = 1.0;
+    
+    // Tell the delegate the end of the interaction
+    if (recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled)
+        if ([self.delegate respondsToSelector:@selector(cardEndedInteracting:)])
+            [self.delegate cardEndedInteracting:self];
 }
 
 
@@ -247,6 +252,49 @@
     }
     else
         [super touchesEnded:touches withEvent:event];
+}
+
+
+#pragma mark - Animations
+
+- (void) animateFlickeringColorOverlay
+{
+    if (!_animatingColorOverlay) {
+        
+        _animatingColorOverlay = YES;
+        
+        CGImageRef overlayImage = [self.imageView.image imageWithOverlayColor:[UIColor orangeColor]].CGImage;
+        CGImageRef originalImage = self.imageView.image.CGImage;
+        
+        CABasicAnimation *crossFadeAnimationToColor = [CABasicAnimation animationWithKeyPath:@"contents"];
+        crossFadeAnimationToColor.fromValue = (__bridge id)(originalImage);
+        crossFadeAnimationToColor.toValue = (__bridge id)(overlayImage);
+        crossFadeAnimationToColor.duration = 1.0;
+        
+        CABasicAnimation *crossFadeAnimationToImage = [CABasicAnimation animationWithKeyPath:@"contents"];
+        crossFadeAnimationToImage.fromValue = (__bridge id)(overlayImage);
+        crossFadeAnimationToImage.toValue = (__bridge id)(originalImage);
+        crossFadeAnimationToImage.duration = 1.0;
+        crossFadeAnimationToImage.beginTime = crossFadeAnimationToColor.duration;
+        
+        CAAnimationGroup *crossFadeAnimation = [CAAnimationGroup animation];
+        crossFadeAnimation.animations = @[crossFadeAnimationToColor, crossFadeAnimationToImage];
+        crossFadeAnimation.repeatCount = INFINITY;
+        crossFadeAnimation.duration = crossFadeAnimationToColor.duration + crossFadeAnimationToImage.duration;
+        
+        [self.imageView.layer addAnimation:crossFadeAnimation forKey:@"animateFlickeringColorOverlay"];
+    }
+}
+
+
+- (void) stopAnimatingFlickeringColorOverlay
+{
+    if (_animatingColorOverlay) {
+        
+        [self.imageView.layer removeAnimationForKey:@"animateFlickeringColorOverlay"];
+        
+        _animatingColorOverlay = NO;
+    }
 }
 
 
