@@ -52,7 +52,7 @@
 {
     if (self = [super initWithFrame:frame])
         [self setup];
-
+    
     return self;
 }
 
@@ -182,27 +182,6 @@
 }
 
 
-/*
-- (void) handleRotation:(UIRotationGestureRecognizer*)recognizer
-{
-    if(recognizer.state == UIGestureRecognizerStateBegan && [self.delegate respondsToSelector:@selector(cardView:willBegingRecognizingGesture:)])
-        [self.delegate cardView:self willBegingRecognizingGesture:recognizer];
-    
-    //recognizer.view.transform = CGAffineTransformRotate(recognizer.view.transform, recognizer.rotation);
-    
-    //NSLog(@"rotation = %f", recognizer.rotation);
-    
-    // Reset rotation
-    recognizer.rotation = 0.0;
-    
-    // Tell the delegate the end of the interaction
-    if (recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled)
-        if ([self.delegate respondsToSelector:@selector(cardEndedInteracting:)])
-            [self.delegate cardEndedInteracting:self];
-}
-*/
-
-
 - (BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
     return NO;
 }
@@ -218,6 +197,9 @@
         CGPoint touchLocation = [[touches anyObject] locationInView:self.superview];
         
         deltaAngle = atan2(touchLocation.y - self.center.y, touchLocation.x - self.center.x) - CGAffineTransformGetAngle(self.transform);
+        
+        if([self.delegate respondsToSelector:@selector(cardView:willBegingRecognizingGesture:)])
+            [self.delegate cardView:self willBegingRecognizingGesture:[[UIRotationGestureRecognizer alloc] init]];
     }
 }
 
@@ -230,13 +212,13 @@
         isRecognisingRotation = YES;
         
         CGPoint touchLocation = [[touches anyObject] locationInView:self.superview];
-    
+        
         float ang = atan2(touchLocation.y - self.center.y, touchLocation.x - self.center.x);
-    
+        
         float angleDiff = deltaAngle - ang;
         
         self.transform = CGAffineTransformRotate(self.transform, -CGAffineTransformGetAngle(self.transform));
-    
+        
         self.transform = CGAffineTransformRotate(self.transform, -angleDiff);
     }
 }
@@ -345,20 +327,6 @@
     
     return _pinchGestureRecognizer;
 }
-
-
-/*
-- (UIRotationGestureRecognizer *) rotationGestureRecognizer
-{
-    if (_rotationGestureRecognizer == nil) {
-        _rotationGestureRecognizer = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotation:)];
-        _rotationGestureRecognizer.delegate = self;
-        [self addGestureRecognizer:_rotationGestureRecognizer];
-    }
-    
-    return _rotationGestureRecognizer;
-}
-*/
 
 
 - (NSMutableArray *) interactions
