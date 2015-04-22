@@ -25,7 +25,7 @@
 @property (nonatomic, readonly) CGFloat maxAcceptableDistance;
 @property (nonatomic, readonly) CGFloat maxAcceptableRotation;
 @property (nonatomic, readonly) CGFloat maxAcceptableScaleVariation;
-@property (nonatomic) int remainingSilhouettes;
+@property (nonatomic) NSInteger remainingSilhouettes;
 @property (nonatomic) BOOL editorMode;
 @property (strong, nonatomic) NSString *activityImageName;
 

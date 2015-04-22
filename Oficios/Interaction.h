@@ -11,10 +11,10 @@
 @interface Interaction : NSObject
 
 @property (strong, nonatomic) NSString *name;
-@property (nonatomic) clock_t start;
-@property (nonatomic) clock_t end;
+@property (nonatomic) NSDate *start;
+@property (nonatomic) NSDate *end;
 @property (nonatomic) BOOL isCorrect;
 
-- (id) initWithName:(NSString*)name startTime:(clock_t)start;
+- (id) initWithName:(NSString*)name startTime:(NSDate*)start;
 
 @end

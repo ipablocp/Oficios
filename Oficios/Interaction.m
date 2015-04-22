@@ -11,7 +11,7 @@
 @implementation Interaction
 
 
-- (id) initWithName:(NSString*)name startTime:(clock_t)start
+- (id) initWithName:(NSString*)name startTime:(NSDate*)start
 {
     if (self = [super init]) {
         self.name = name;

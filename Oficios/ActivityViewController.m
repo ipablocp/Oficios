@@ -26,7 +26,6 @@ NSString *TaskNameTitle = @"Nombre de la tarea";
 
 @interface ActivityViewController ()
 @property (nonatomic, weak) UIControl *selectedObject;
-@property (nonatomic) clock_t creationTime;
 @property (nonatomic) BOOL isCompletionInOrder;
 // Edit Mode
 @property (nonatomic) UIControl *controlWaitingForImage;
@@ -106,14 +105,6 @@ NSString *TaskNameTitle = @"Nombre de la tarea";
 }
 
 
-- (void) viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    
-    self.creationTime = clock();
-}
-
-
 - (void) dealloc
 {
     AudioServicesDisposeSystemSoundID(_correctSoundID);
@@ -128,7 +119,7 @@ NSString *TaskNameTitle = @"Nombre de la tarea";
     // Create a new interaction record
     Interaction *newInteraction = [[Interaction alloc] init];
     newInteraction.name = [self nameForGesture:gestureRecognizer];
-    newInteraction.start = clock() - self.creationTime;
+    newInteraction.start = [NSDate date];
     [card.interactions addObject:newInteraction];
 }
 
@@ -140,7 +131,7 @@ NSString *TaskNameTitle = @"Nombre de la tarea";
     
     // Save interaction end time
     Interaction *interaction = [card.interactions lastObject];
-    interaction.end = clock() - self.creationTime;
+    interaction.end = [NSDate date];
     
     __block BOOL isNearAWrongSilhouette = NO;
     
@@ -239,7 +230,7 @@ NSString *TaskNameTitle = @"Nombre de la tarea";
 - (void) objectTouched:(UIControl*)sender
 {
     // We'll save the start time if the first selected object is a silhouette
-    static clock_t startTime;
+    static NSDate *startTime;
     
     if (self.selectedObject != nil && [self.selectedObject class] != [sender class]) {
         
@@ -253,10 +244,10 @@ NSString *TaskNameTitle = @"Nombre de la tarea";
             interaction = [card.interactions lastObject];
         // First selected object was a Silhouette
         else {
-            interaction = [[Interaction alloc] initWithName:@"seleccion" startTime:startTime];
+            interaction = [[Interaction alloc] initWithName:@"seleccion" startTime:[NSDate date]];
             [card.interactions addObject:interaction];
         }
-        interaction.end = clock() - self.creationTime;
+        interaction.end = [NSDate date];
         
         NSInteger idx = [self.silhouettes indexOfObject:silhouette];
         BOOL admissible = [self shouldAcceptSilhouetteCompletionAtIndex:idx];
@@ -339,11 +330,11 @@ NSString *TaskNameTitle = @"Nombre de la tarea";
         // In case the selected object is a card we create an interaction object right away
         if ([sender isKindOfClass:[CardView class]]) {
             CardView *card = (CardView*)sender;
-            Interaction *interaction = [[Interaction alloc] initWithName:@"seleccion" startTime:(clock() - self.creationTime)];
+            Interaction *interaction = [[Interaction alloc] initWithName:@"seleccion" startTime:[NSDate date]];
             [card.interactions addObject:interaction];
         }
         else
-            startTime = clock() - self.creationTime;
+            startTime = [NSDate date];
     }
 }
 
@@ -475,10 +466,13 @@ NSString *TaskNameTitle = @"Nombre de la tarea";
 {
     NSMutableString *resultsString = [NSMutableString string];
     
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"dd/MM/yyyy HH:mm"];
+    NSDateFormatter *formatterDate = [[NSDateFormatter alloc] init];
+    [formatterDate setDateFormat:@"dd/MM/yyyy HH:mm"];
     
-    [resultsString appendFormat:@"<resultados fecha=\"%@\"> \n", [formatter stringFromDate:[NSDate date]]];
+    NSDateFormatter *formatterTime = [[NSDateFormatter alloc] init];
+    [formatterTime setDateFormat:@"HH:mm:ss"];
+    
+    [resultsString appendFormat:@"<resultados fecha=\"%@\"> \n", [formatterDate stringFromDate:[NSDate date]]];
     [resultsString appendFormat:@"<tarea id=\"%@\" resultado=\"%d\"> \n", self.task.taskID, (self.remainingSilhouettes) ? 0 : 1];
     
     // Write all the cards
@@ -488,8 +482,11 @@ NSString *TaskNameTitle = @"Nombre de la tarea";
             
             // Write all the interactions
             for (Interaction *interaction in card.interactions){
-                NSLog(@"%lu", interaction.end);
-                [resultsString appendFormat:@"\t <%@ ini=\"%lu\" fin=\"%lu\" resultado=\"%d\"/> \n", interaction.name, interaction.start, interaction.end, interaction.isCorrect];
+                [resultsString appendFormat:@"\t <%@ ini=\"%@\" fin=\"%@\" resultado=\"%d\"/> \n",
+                 interaction.name,
+                 [formatterTime stringFromDate:interaction.start],
+                 [formatterTime stringFromDate:interaction.end],
+                 interaction.isCorrect];
             }
             
             [resultsString appendString:@"</elemento> \n"];
